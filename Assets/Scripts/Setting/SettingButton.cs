@@ -34,7 +34,8 @@ public class SettingButton : MonoBehaviour
             settingBoard.SetActive(true);
             // settingBoardPos.localPosition = new Vector3(50, 250, 0);
             settingBoardPos.DOScale(new Vector3(1, 1, 1), 0.5f);
-            settingBoardPos.DOMove(new Vector3(540, 860, 0), 0.5f);
+            // settingBoardPos.DOMove(new Vector3(540, 860, 0), 0.5f);
+            settingBoardPos.DOMove(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0), 0.5f);
         }
 
         // ボタンクリック音を鳴らす.
@@ -50,7 +51,7 @@ public class SettingButton : MonoBehaviour
         settingBoardPos.DOScale(new Vector3(0, 0, 0), 0.5f);
 
         // settingBoardの位置を、settingBoard本来の位置に.
-        settingBoardPos.localPosition = new Vector3(50,250,0);
+        settingBoardPos.localPosition = settingIconPos.position;
 
         yield return new WaitForSeconds(0.5f);
         settingBoard.SetActive(false);
