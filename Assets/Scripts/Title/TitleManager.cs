@@ -40,7 +40,7 @@ public class TitleManager : MonoBehaviour
         Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
 
         // 状態異常の保持などに使っていたプレイヤーデータを削除する.
-        PlayerPrefs.DeleteAll();
+        PlayerPrefs.DeleteAll();    // 危険？.
 
         player.Level = 1;
         player.Init_playerParameter();

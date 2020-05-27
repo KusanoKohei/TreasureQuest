@@ -34,9 +34,8 @@ public class HPGage : MonoBehaviour
                 currentValue = Player.Hp;
                 maxValue = Player.MaxHP;
 
-                slider.value = currentValue;
-
-                slider.maxValue = maxValue;
+                // slider.value = currentValue;
+                // slider.maxValue = maxValue;
 
                 
                 sliderImage.GetComponent<Image>().fillAmount = currentValue / maxValue;
@@ -53,8 +52,8 @@ public class HPGage : MonoBehaviour
                 currentValue = Enemy.hp;
                 maxValue = Enemy.maxHP;
 
-                slider.value = currentValue;
-                slider.maxValue = maxValue;
+                // slider.value = currentValue;
+                // slider.maxValue = maxValue;
 
                 sliderImage.GetComponent<Image>().fillAmount = currentValue / maxValue;
                 

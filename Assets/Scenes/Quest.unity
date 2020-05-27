@@ -1044,6 +1044,38 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1113767112, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_FontData.m_FontStyle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1377623851, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1377623851, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1377623851, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965401310, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965401310, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965401310, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 164
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965401310, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2187880319126994148, guid: 382f8d3b9fa9abc49974332f7161e081,
         type: 3}
       propertyPath: m_UiScaleMode
@@ -1063,6 +1095,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ScreenMatchMode
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2187880319126994149, guid: 382f8d3b9fa9abc49974332f7161e081,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2187880319126994149, guid: 382f8d3b9fa9abc49974332f7161e081,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 963194227}
+    - target: {fileID: 2187880319126994149, guid: 382f8d3b9fa9abc49974332f7161e081,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 763617477
       objectReference: {fileID: 0}
     - target: {fileID: 2187880319126994150, guid: 382f8d3b9fa9abc49974332f7161e081,
         type: 3}
@@ -3118,7 +3165,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 12800000, guid: 424efdeb75c3ed640bca4406a0359eea, type: 3}
     m_FontSize: 42
-    m_FontStyle: 1
+    m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 3
     m_MaxSize: 54
@@ -3308,6 +3355,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlayerUICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7515999779445555886, guid: 53afa526f3fe5884f892ad646dc22939,
+        type: 3}
+      propertyPath: m_FontData.m_FontStyle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7515999779445555886, guid: 53afa526f3fe5884f892ad646dc22939,
+        type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7881881728981341448, guid: 53afa526f3fe5884f892ad646dc22939,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 220
+      objectReference: {fileID: 0}
+    - target: {fileID: 7881881728981341448, guid: 53afa526f3fe5884f892ad646dc22939,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 7881881728981341448, guid: 53afa526f3fe5884f892ad646dc22939,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53afa526f3fe5884f892ad646dc22939, type: 3}
