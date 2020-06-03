@@ -17,6 +17,7 @@ public class TapToAttack : MonoBehaviour
 
     private Sequence sequence;
 
+    #region Singleton
     public static TapToAttack instance;
 
     private void Awake()
@@ -30,7 +31,7 @@ public class TapToAttack : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-
+    #endregion
 
     private void Start()
     {

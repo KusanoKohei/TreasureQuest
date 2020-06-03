@@ -45,10 +45,10 @@ public class Arles : EnemyManager
         enemy.AllowedAction = false;
 
         int r;
-        r = Random.Range(0, 6);
+        r = Random.Range(0, 9);
         // r = 6; // デバッグ用.
 
-        if ((r >= 4) && (r < 6))
+        if ((r >= 7) && (r < 9))
         {
             StartCoroutine(ArlesFireBreath());
         }

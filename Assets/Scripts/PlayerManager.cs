@@ -112,6 +112,8 @@ public class PlayerManager : MonoBehaviour
 
     public void Init_playerParameter()  // ニューゲーム時の初期化.
     {
+        // this.Level = 3; // デバッグ用.
+
         this.MaxHP   = Level_ParameterManager.playerLevel[this.Level-1, 1];
         this.Hp      = Level_ParameterManager.playerLevel[this.Level-1, 2];
         this.Atk     = Level_ParameterManager.playerLevel[this.Level-1, 3];
@@ -487,7 +489,7 @@ public class PlayerManager : MonoBehaviour
             // 防御エフェクト.
             GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
             defenceEffect.transform.localPosition = new Vector3(0,-2,0);
-            defenceEffect.transform.localScale = new Vector3(30, 30, 0);
+            defenceEffect.transform.localScale = new Vector3(2, 2, 0);
             Instantiate(defenceEffect, this.transform, false);
 
             DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "の\n次の攻撃にそなえた" });

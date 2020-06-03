@@ -6,14 +6,15 @@ using UnityEngine.UI;
 public class SettingMessageSpeed : MonoBehaviour
 {
     public Text buttonLabel;
+
     private int num;
 
     [SerializeField]
-    private float slow   = 1.0f;
+    private float slow;
     [SerializeField]
-    private float normal = 1.5f;
+    private float normal;
     [SerializeField]
-    private float fast   = 1.0f;
+    private float fast;
     public enum Status
     {
         Slow,
@@ -23,12 +24,11 @@ public class SettingMessageSpeed : MonoBehaviour
 
     Status status;
 
-    SettingManager settingManager => SettingManager.instance;
+    SettingManager SettingManager => SettingManager.instance;
 
     public float Slow { get => slow; set => slow = value; }
     public float Normal { get => normal; set => normal = value; }
     public float Fast { get => fast; set => fast = value; }
-
 
     // Start is called before the first frame update
     void Start()
@@ -38,22 +38,22 @@ public class SettingMessageSpeed : MonoBehaviour
 
     void CheckNum()
     {
-        if (SoundManager.instance.audioSourceBGM.volume == Slow)
+        if (SettingManager.instance.MessageSpeed == 1.5f)
         {
             num = 0;
-            status = Status.Slow;
+            SettingManager.MessageSpeed = Slow;
             buttonLabel.text = "遅い";
         }
-        else if (settingManager.MessageSpeed == Normal) 
+        else if (SettingManager.instance.MessageSpeed == 1.25f) 
         {
             num = 1;
-            status = Status.Normal;
+            SettingManager.MessageSpeed = Normal;
             buttonLabel.text = "ふつう";
         }
-        else if (settingManager.MessageSpeed == Fast)
+        else if (SettingManager.instance.MessageSpeed == 1.0f)
         {
             num = 2;
-            status = Status.Fast;
+            SettingManager.MessageSpeed = Fast;
             buttonLabel.text = "早い";
         }
     }
@@ -66,19 +66,19 @@ public class SettingMessageSpeed : MonoBehaviour
             case 0:
                 status = Status.Slow;
                 buttonLabel.text = "遅い";
-                settingManager.MessageSpeed = 2.0f;
+                SettingManager.MessageSpeed = Slow;
                 break;
 
             case 1:
                 status = Status.Normal;
                 buttonLabel.text = "ふつう";
-                settingManager.MessageSpeed = 1.5f;
+                SettingManager.MessageSpeed = Normal;
                 break;
 
             case 2:
                 status = Status.Fast;
                 buttonLabel.text = "早い";
-                settingManager.MessageSpeed = 1.0f;
+                SettingManager.MessageSpeed = Fast;
                 break;
         }
     }

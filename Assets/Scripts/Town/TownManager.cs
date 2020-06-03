@@ -123,6 +123,6 @@ public class TownManager : MonoBehaviour
     public void SetActiveTownButton(bool ready)
     {
         toQuestButton.SetActive(ready);
-        saveButton.SetActive(ready);
+        // saveButton.SetActive(ready);
     }
 }

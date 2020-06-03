@@ -11,13 +11,11 @@ public class SettingButton : MonoBehaviour
     [SerializeField]
     private GameObject settingBoard;
 
-    private RectTransform settingIconPos;
     private RectTransform settingBoardPos;
     private Vector3 Pos = new Vector3(0,0,0);
 
     private void Start()
     {
-        settingIconPos = settingIcon.GetComponent<RectTransform>();
         settingBoardPos = settingBoard.GetComponent<RectTransform>();
     }
 
@@ -32,9 +30,7 @@ public class SettingButton : MonoBehaviour
         else if(!settingBoard.activeSelf)
         {
             settingBoard.SetActive(true);
-            // settingBoardPos.localPosition = new Vector3(50, 250, 0);
             settingBoardPos.DOScale(new Vector3(1, 1, 1), 0.5f);
-            // settingBoardPos.DOMove(new Vector3(540, 860, 0), 0.5f);
             settingBoardPos.DOMove(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0), 0.5f);
         }
 
@@ -45,13 +41,12 @@ public class SettingButton : MonoBehaviour
     private IEnumerator CloseAction()
     {
         // 移動.
-        settingBoardPos.DOMove(new Vector3(990, 1830, 0), 0.5f);
+        settingBoardPos.DOMove(new Vector3(settingIcon.transform.position.x, settingIcon.transform.position.y, 0), 0.5f);
 
         // 縮小.
         settingBoardPos.DOScale(new Vector3(0, 0, 0), 0.5f);
 
         // settingBoardの位置を、settingBoard本来の位置に.
-        settingBoardPos.localPosition = settingIconPos.position;
 
         yield return new WaitForSeconds(0.5f);
         settingBoard.SetActive(false);

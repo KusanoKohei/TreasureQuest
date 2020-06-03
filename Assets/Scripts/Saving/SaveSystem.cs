@@ -13,8 +13,8 @@ public class SaveSystem
 
     private SaveSystem() { Load(); }
 
-    // public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
-    public string Path => Application.persistentDataPath+ "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+    public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+    // public string Path => Application.persistentDataPath+ "/data.json";  // WebGL版のセーブデータの保管先.
 
     public string path => Application.streamingAssetsPath + "/data.json";
 
@@ -64,8 +64,8 @@ public class SaveSystem
             return;
         }
 
-        // StreamReader reader = new StreamReader(Path);
-        StreamReader reader = new StreamReader(path);
+        StreamReader reader = new StreamReader(Path);
+        // StreamReader reader = new StreamReader(path);
         string jsonData = reader.ReadToEnd();
         UserData = JsonUtility.FromJson<UserData>(jsonData);
         reader.Close();

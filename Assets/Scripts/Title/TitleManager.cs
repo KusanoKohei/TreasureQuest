@@ -2,29 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class TitleManager : MonoBehaviour
 {
+    public GameObject tapToStartPanel;
+    [SerializeField]
+    private GameObject tapToStartImage;
+    [SerializeField]
+    private CanvasGroup tapToStartCanvasGroup;
+
     public PlayerManager player;
 
     private GameObject dialogWindow;
     private CanvasGroup dialogCanvas;
-    public GameObject noticeBoard;
 
-    public Text noticeText;
-    
+    // public GameObject noticeBoard;
+    // public Text noticeText;
 
-    UserData Userdata => SaveSystem.Instance.UserData;
+    bool active = false;
+
+    SceneTransitionManager sceneManager => SceneTransitionManager.instance;
+
+    // UserData Userdata => SaveSystem.Instance.UserData;
 
 
     // ------------------------------------ //
     private void Start()
     {
-        SettingManager.instance.MessageSpeed        = Userdata.messageSpeed;
-        SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
-        SoundManager.instance.audioSourceSE.volume  = Userdata.SEvolume;
+        // SettingManager.instance.MessageSpeed        = Userdata.messageSpeed;
+        // SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
+        // SoundManager.instance.audioSourceSE.volume  = Userdata.SEvolume;
 
-        CheckNotice();
+        StartCoroutine(TapToStartImageAnimating());
+
+        // CheckNotice();
 
         // ダイアログウィンドウを非表示にしておく.
         dialogWindow = GameObject.Find("FadeCanvas/DialogUI");
@@ -33,6 +45,29 @@ public class TitleManager : MonoBehaviour
         dialogWindow.SetActive(false);
     }
 
+    private IEnumerator TapToStartImageAnimating()
+    {
+        tapToStartCanvasGroup = tapToStartImage.GetComponent<CanvasGroup>();
+        tapToStartCanvasGroup.DOFade(0.0f, 1.0f).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
+
+        // LoadTo関数を起動する時間を遅延させて、ゲーム立ち上げ時にいきなりシーン遷移しないように.
+        yield return new WaitForSeconds(1.0f);  
+        active = true;
+    }
+
+    public void TapToStartPanel()
+    {
+        if (active)
+        {
+            player.Level = 1;
+            player.Init_playerParameter();
+            SoundManager.instance.PlayButtonSE(0);
+
+            sceneManager.LoadTo("Town");
+        }
+    }
+
+    /*
     public void OnTapNewGameButton()
     {
         Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
@@ -61,4 +96,5 @@ public class TitleManager : MonoBehaviour
             noticeBoard.SetActive(false);
         }
     }
+    */
 }

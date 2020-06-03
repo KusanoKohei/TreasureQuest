@@ -73,21 +73,9 @@ public class QuestManager : MonoBehaviour
 
         for (int i=0; i<encountTable.Length; i++)
         {
-            int n = Random.Range(-1,2);
-            // int n = -1;  // デバッグ用;
+            int n = Random.Range(-2,2);
+            // int n = -2;  // デバッグ用;
             encountTable[i] = n;
-
-            /*
-            if (i > encountTable.Length / 2)
-            {
-                int r = Random.Range(0, 5);
-
-                if (r == 0)
-                {
-                    encountTable[i] = 10;   // 回復の泉.
-                }
-            }
-            */
 
             if (Player.Level == 1 && encountTable[i] == 0)  // レベル１では強敵に出くわさない.
             {
@@ -97,7 +85,7 @@ public class QuestManager : MonoBehaviour
             {
                 encountTable[i] = -1;
             }
-            else if (Player.Level >= 4 && encountTable[i] == 1)    // レベル４の時、弱い敵は一定確率で強敵に変える.
+            else if (Player.Level == 4 && encountTable[i] == 1)    // レベル４の時、弱い敵は一定確率で強敵に変える.
             {
                 int r = Random.Range(0, 2);
                 if (r == 0)
@@ -110,12 +98,12 @@ public class QuestManager : MonoBehaviour
                 }
                 
             }
-            else if(Player.Level >= 3 && encountTable[i] == 1)      // レベル３の時は弱い敵を1/2の確率で強敵に差し替える.
+            else if(Player.Level == 2 && encountTable[i] == 0)      // レベル２の時は強い敵を1/2の確率で弱い敵に差し替える.
             {
                 int r = Random.Range(0, 2);
                 if (r == 0)
                 {
-                    encountTable[i] = 0;
+                    encountTable[i] = 1;
                 }
             }
         }
@@ -146,19 +134,22 @@ public class QuestManager : MonoBehaviour
         }
         else if(currentStage < encountTable.Length)
         {
-            if (encountTable[currentStage] >= 0)             // -1であればエンカウントしない.
+            if (encountTable[currentStage] >= 0)             // -1,-2であればエンカウントしない.
             {
                 EncountEnemy(encountTable[currentStage]);
             }
-            /*
-            else if(encountTable[currentStage] == 10)
-            {
-                StartCoroutine(HealSpot());
-            }
-            */
             else
             {
                 stageUI.ButtonUIAppearance(true);
+
+                if (currentStage >= encountTable.Length - 3)
+                {
+                    DialogTextManager.instance.SetScenarios(new string[] { "強い敵の気配がする……" });
+                }
+                else
+                {
+                    DialogTextManager.instance.SetScenarios(new string[] { "お宝も敵も見当たらない" });
+                }
             }
         } 
     }
@@ -259,7 +250,7 @@ public class QuestManager : MonoBehaviour
 
         DialogTextManager.instance.SetScenarios(new string[] { "体力を1/3回復させます" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed * 2);
-        DialogTextManager.instance.SetScenarios(new string[] { "一回のクエストで一度しか使えませんが　実行しますか？" });
+        DialogTextManager.instance.SetScenarios(new string[] { "今回のクエストで一度しか使えません\n実行しますか？" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         stageUI.YesNoButtonAppearance(true);
@@ -320,6 +311,8 @@ public class QuestManager : MonoBehaviour
     {
         stageUI.ButtonUIAppearance(true);
         SoundManager.instance.PlayBGM("Quest");
+
+        Debug.Log(PlayerManager.instance.Dead);
     }
 
     public IEnumerator GameOver()
@@ -385,6 +378,7 @@ public class QuestManager : MonoBehaviour
 
         Player.PlayerInitPerBattleEnd();    // バトル終了ごとの初期化処理.
 
+        /*
         // ---- セーブ.
         Userdata.level = Player.Level;
         Userdata.maxHP = Player.MaxHP;
@@ -409,6 +403,14 @@ public class QuestManager : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         DialogTextManager.instance.SetScenarios(new string[] { "タイトルの『つづきから』で\n現状の強さから再開できます" });
+        yield return new WaitForSeconds(4.0f);
+
+        */
+
+        DialogTextManager.instance.SetScenarios(new string[] { "今後もこのゲームは\n様々な機能を実装する予定です" });
+        yield return new WaitForSeconds(2.0f);
+
+        DialogTextManager.instance.SetScenarios(new string[] { "またクエストに\n挑戦しにきてください！" });
         yield return new WaitForSeconds(4.0f);
 
         CanvasGroup dialogCanvas = dialogWindow.GetComponent<CanvasGroup>();

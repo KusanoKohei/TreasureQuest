@@ -17,6 +17,9 @@ public class ProtectionStatus : MonoBehaviour
     {
         enemy.NowProtection = true;
 
+        // 空振り音(SE).
+        SoundManager.instance.PlayButtonSE(3);
+        
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 

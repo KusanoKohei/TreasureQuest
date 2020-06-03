@@ -191,7 +191,7 @@ MonoBehaviour:
   hp: 400
   maxHP: 400
   atk: 30
-  spd: 20
+  spd: 12
   critical: 3
   dodge: 1
   buff: 0

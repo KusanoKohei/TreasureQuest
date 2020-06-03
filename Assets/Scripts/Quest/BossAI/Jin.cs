@@ -16,6 +16,7 @@ public class Jin : EnemyManager
     private bool berserkAtOnce = false;
 
     private bool iceBurnDirecting = false;
+    private int waited = 0;
 
     public BattleManager BattleManager => BattleManager.instance;
 
@@ -37,6 +38,13 @@ public class Jin : EnemyManager
         enemyUI.nameObj.transform.localPosition = new Vector3(-66, 516, 0);
         enemyUI.hpObj.transform.localPosition = new Vector3(0, 431, 0);
 
+        // レベル３くらいでも勝てるように.
+        if (Player.Level <= 3)
+        {
+            this.maxHP = 350;
+            this.hp = 350;
+            this.atk = 25;
+        }
  
         //-- 敵プレハブのパラメータをEnemyManagerに引き渡し反映させる. -- //
         enemy.name = this.name;
@@ -119,68 +127,169 @@ public class Jin : EnemyManager
     public void NormalActionSelect()
     {
         int r;
-        r = Random.Range(0, 8);
-        r = 1; // デバッグ用.
+        r = Random.Range(0, 11);
+        // r = 1; // デバッグ用.
 
-        if (enemy.hp <= (enemy.hp / 4))
+        // レベル３でも倒せそうに優遇する.
+        if (Player.Level <= 3)
         {
-            StartCoroutine(JinHealDirecting());
-        }
-        else if (r == 7)
-        {
-            StartCoroutine(IceProtect());   // 氷の壁の防御.
-        }
-        else if ((r == 5)||(r == 6))
-        {
-            StartCoroutine(IceNiddle());    // アイスニードル.
+            if (enemy.hp <= (enemy.hp / 6))
+            {
+                int d = Random.Range(0, 7);
+                if (d < 4)
+                {
+                    StartCoroutine(JinHealDirecting());
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
+            else if (r == 10)
+            {
+                StartCoroutine(IceProtect());   // 氷の壁の防御.
+            }
+            else if (r == 9)
+            {
+                StartCoroutine(IceNiddle());    // アイスニードル.
+            }
+            else if ((5 <= r) && (r <= 7))
+            {
+                if (waited > 0)
+                {
+                    waited = 0;
+                    StartCoroutine(JinCommonAttack());              // 通常攻撃.
+                }
+                else
+                {
+                    StartCoroutine(JinWaiting());
+                }
+            }
+            else
+            {
+                StartCoroutine(JinCommonAttack());       // 通常攻撃.
+            }
         }
         else
         {
-            StartCoroutine(JinCommonAttack());              // 通常攻撃.
+            if (enemy.hp <= (enemy.hp / 4))
+            {
+                int d = Random.Range(0, 7);
+                if (d < 4)
+                {
+                    StartCoroutine(JinHealDirecting());
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
+            else if (r == 10)
+            {
+                StartCoroutine(IceProtect());   // 氷の壁の防御.
+            }
+            else if ((r == 8) || (r == 9))
+            {
+                StartCoroutine(IceNiddle());    // アイスニードル.
+            }
+            else
+            {
+                StartCoroutine(JinCommonAttack());       // 通常攻撃.
+            }
         }
     }
 
     public void BerserkActionSelect()
     {
         int r;
-        r = Random.Range(0, 10);
+        r = Random.Range(0, 11);
 
-
-        if (enemy.hp <= (enemy.hp / 4))
-        {
-            StartCoroutine(JinHealDirecting());
-        }
-        else if (berserkMessaging)
-        {
-            r = 6;
-        }
-        else if (berserkAtOnce && Player.Level>=5)
+        if (berserkMessaging)
         {
             r = 8;
         }
+        else if (berserkAtOnce && Player.Level >= 5)
+        {
+            r = 10;
+        }
 
-        if (charged)    // 事前に力をためていたなら.
+        if (Player.Level <= 3)
         {
-            StartCoroutine(IceBurn());              // 必殺技『アイスバーン』.
-        }
-        else if ((r==8)||(r==9))
-        {
-            StartCoroutine(ChargeDirecting());      // 必殺技前の溜め.
-        }
-        else if ((r==6)||(r==7))
-        {
-            StartCoroutine(IceProtect());           // 氷の壁.
-        }
-        else if ((3 <= r) || (r <= 5))
-        {
-            StartCoroutine(IceNiddle());            // アイスニードル. 
+            if (enemy.hp <= (enemy.maxHP / 6))
+            {
+                int d = Random.Range(0, 7);
+                if (d < 4)
+                {
+                    StartCoroutine(JinHealDirecting());
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
+            else
+            {
+                if (charged)    // 事前に力をためていたなら.
+                {
+                    StartCoroutine(IceBurn());              // 必殺技『アイスバーン』.
+                }
+                else if ((r == 9) || (r == 10))
+                {
+                    StartCoroutine(ChargeDirecting());      // 必殺技前の溜め.
+                }
+                else if ((r == 7) || (r == 8))
+                {
+                    StartCoroutine(IceProtect());           // 氷の壁.
+                }
+                else if (r == 6)
+                {
+                    StartCoroutine(IceNiddle());            // アイスニードル. 
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
         }
         else
         {
-            Debug.Log("ここまで到達");
-
-            StartCoroutine(JinCommonAttack());  // 通常攻撃.
+            if (enemy.hp <= (enemy.maxHP / 4))
+            {
+                int d = Random.Range(0, 7);
+                if (d < 4)
+                {
+                    StartCoroutine(JinHealDirecting());
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
+            else
+            {
+                if (charged)    // 事前に力をためていたなら.
+                {
+                    StartCoroutine(IceBurn());              // 必殺技『アイスバーン』.
+                }
+                else if ((r == 9) || (r == 10))
+                {
+                    StartCoroutine(ChargeDirecting());      // 必殺技前の溜め.
+                }
+                else if ((r == 7) || (r == 8))
+                {
+                    StartCoroutine(IceProtect());           // 氷の壁.
+                }
+                else if ((5 == r) || (r == 6))
+                {
+                    StartCoroutine(IceNiddle());            // アイスニードル. 
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
         }
+        
     }
 
     public IEnumerator JinCommonAttack()
@@ -189,17 +298,6 @@ public class Jin : EnemyManager
 
         StartCoroutine(enemy.Attacks());
         yield return new WaitWhile(() => enemy.NowActive);
-
-        /*
-        if (enemy.Hitted && (!Player.Poison))   // 攻撃が当たったときかつ、毒状態ではない時にのみ毒状態にかかるかの判定.
-        {
-            PoisonProbability();
-            // HittedはBattleManagerで初期化する.
-        }
-
-        // 毒状態にかかった演出が終了するまで待機させる.
-        yield return new WaitWhile(() => BattleManager.PoisonDirecting);
-        */
 
         BattleManager.EndOfEnemyTurn();
     }
@@ -297,7 +395,7 @@ public class Jin : EnemyManager
         enemy.critical = this.critical;
         Debug.Log(enemy.critical);
 
-        if (Player.Hp>=0)
+        if (!Player.Dead)
         {
             DialogTextManager.instance.SetScenarios(new string[] { "せまりくる氷をしのぎ切った！" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
@@ -346,7 +444,7 @@ public class Jin : EnemyManager
         // 防御エフェクト.
         GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
         defenceEffect.transform.localPosition = new Vector3 (0, 0, 0);
-        defenceEffect.transform.localScale = new Vector3(30, 30, 0);
+        defenceEffect.transform.localScale = new Vector3(3, 3, 0);
         Instantiate(defenceEffect, enemy.transform, false);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は\n氷の壁をつくりだした" });
@@ -396,7 +494,17 @@ public class Jin : EnemyManager
         healEffect.transform.localScale = new Vector3(5, 5, 0);
         Instantiate(healEffect, this.transform, false);
 
-        int healPoint = (int)this.maxHP/3;
+        int healPoint;
+
+        if(Player.Level<= 3)
+        {
+            healPoint = (int)this.maxHP / 6; 
+        }
+        else
+        {
+            healPoint = (int)this.maxHP / 5;
+        }
+        
         enemy.hp += healPoint;
         if(enemy.hp>= enemy.maxHP)
         {
@@ -408,6 +516,17 @@ public class Jin : EnemyManager
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は回復呪文を唱えた" });
         yield return new WaitForSeconds(2.0f);
 
+        BattleManager.EndOfEnemyTurn();
+    }
+
+    public IEnumerator JinWaiting()
+    {
+        waited++;
+
+        DialogTextManager.instance.SetScenarios(new string[] { this.name + "は 様子をみている" });
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+        enemy.IsTurned = true;
         BattleManager.EndOfEnemyTurn();
     }
 
