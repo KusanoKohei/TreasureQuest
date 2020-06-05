@@ -276,7 +276,6 @@ public class QuestManager : MonoBehaviour
 
     public void OnClickYesButton()
     {
-        Debug.Log("yes");
         selection = 1;
         selected = true;
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -102,6 +103,10 @@ public class BattleManager : MonoBehaviour
             DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "  が\n襲いかかってきた" });
             yield return new WaitForSeconds(2f);
         }
+
+        Debug.Log(DialogTextManager.instance.IsEnd);
+        
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd == true);
 
         CheckWhoseTurn();
     }

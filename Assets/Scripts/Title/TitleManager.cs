@@ -24,7 +24,7 @@ public class TitleManager : MonoBehaviour
 
     SceneTransitionManager sceneManager => SceneTransitionManager.instance;
 
-    // UserData Userdata => SaveSystem.Instance.UserData;
+    UserData Userdata => SaveSystem.Instance.UserData;
 
 
     // ------------------------------------ //
@@ -67,12 +67,11 @@ public class TitleManager : MonoBehaviour
         }
     }
 
-    /*
     public void OnTapNewGameButton()
     {
-        Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
-        Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-        Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
+        // Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
+        // Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
+        // Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
 
         // 状態異常の保持などに使っていたプレイヤーデータを削除する.
         PlayerPrefs.DeleteAll();    // 危険？.
@@ -88,13 +87,12 @@ public class TitleManager : MonoBehaviour
             SoundManager.instance.audioSourceBGM.volume == 0 || 
             SoundManager.instance.audioSourceSE.volume == 0)
         {
-            noticeBoard.SetActive(true);
-            noticeText.text = ("セーブデータの設定を反映し\nメッセージ速度や音量を調整しています");
+            // noticeBoard.SetActive(true);
+            // noticeText.text = ("セーブデータの設定を反映し\nメッセージ速度や音量を調整しています");
         }
         else
         {
-            noticeBoard.SetActive(false);
+            // noticeBoard.SetActive(false);
         }
     }
-    */
 }

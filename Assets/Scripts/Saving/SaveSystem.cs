@@ -19,7 +19,7 @@ public class SaveSystem
     public string path => Application.streamingAssetsPath + "/data.json";
 
 
-    // private UserData userData = new UserData();
+    private UserData userData = new UserData();
     public UserData UserData{get; private set;}
 
     private PlayerManager Player => PlayerManager.instance;

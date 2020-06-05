@@ -12,6 +12,8 @@ public class DialogTextManager : MonoBehaviour
     [SerializeField] float eventDelayTime;
     //1/16 終了したかどうかのフラグ(これがないと終了後繰り返し関数を実行してしまう)
     bool isEnd;
+    public bool IsEnd { get => isEnd; set => isEnd = value; }
+
 
     public UnityAction onClickText;
     public string[] scenarios;
@@ -78,11 +80,13 @@ public class DialogTextManager : MonoBehaviour
     // 1/16 追加:終了したか調べて終了していれば登録関数を実装する
     void CheckCompletedText()
     {
-        if (isEnd == false && IsCompleteDisplayText && scenarios.Length == currentLine)
+        if (IsEnd == false && IsCompleteDisplayText && scenarios.Length == currentLine)
         {
-            isEnd = true;
-            // 登録関数をeventDelayTime秒後に実行
-            Invoke("EventFunction", eventDelayTime);
+
+                IsEnd = true;
+                // 登録関数をeventDelayTime秒後に実行
+                Invoke("EventFunction", eventDelayTime);
+            
         }
     }
     // 1/16 追加:登録関数の実行
@@ -94,7 +98,7 @@ public class DialogTextManager : MonoBehaviour
 
     public void SetNextLine()
     {
-        isEnd = false;
+        IsEnd = false;
         if (scenarios.Length - 1 < currentLine)
         {
             return;

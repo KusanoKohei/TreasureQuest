@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4319680
 RectTransform:
   m_ObjectHideFlags: 0
@@ -257,6 +257,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1113767113, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
+      propertyPath: onCompletedEvents.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1377623851, guid: 382f8d3b9fa9abc49974332f7161e081, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0.5
@@ -823,7 +827,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &831472249
 RectTransform:
   m_ObjectHideFlags: 0
@@ -898,8 +902,8 @@ MonoBehaviour:
           m_StringArgument: Town
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 599420512}
-        m_MethodName: 
+      - m_Target: {fileID: 599420513}
+        m_MethodName: OnTapNewGameButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1164,7 +1168,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &950648538
 RectTransform:
   m_ObjectHideFlags: 0
