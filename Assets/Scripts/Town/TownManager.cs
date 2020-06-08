@@ -77,6 +77,7 @@ public class TownManager : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "街に帰りついた……" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*2);
 
+
         if (Player.Level >= 2 && Player.Dead)
         {
             Player.Dead = false;

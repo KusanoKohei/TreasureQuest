@@ -7,7 +7,7 @@ public class LoadButton : MonoBehaviour
 {
     public Text text;
 
-    UserData Userdata => SaveSystem.Instance.UserData;
+    UserData Userdata => SaveSystem.instance.UserData;
     PlayerManager Player => PlayerManager.instance;
     public void OnTapLoadButton()
     {
@@ -15,9 +15,9 @@ public class LoadButton : MonoBehaviour
         Userdata.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
         Userdata.SEvolume = SoundManager.instance.audioSourceSE.volume;
 
-        SaveSystem.Instance.Save();
+        SaveSystem.instance.Save();
 
-        SaveSystem.Instance.Load();
+        SaveSystem.instance.Load();
 
         Player.Level    = Userdata.level;
         Player.MaxHP    = Userdata.maxHP;

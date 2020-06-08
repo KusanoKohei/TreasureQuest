@@ -19,6 +19,8 @@ public class Jin : EnemyManager
     private int waited = 0;
 
     public BattleManager BattleManager => BattleManager.instance;
+    private DialogTextManager Dialog => DialogTextManager.instance;
+
 
     enum Status
     {
@@ -38,7 +40,7 @@ public class Jin : EnemyManager
         enemyUI.nameObj.transform.localPosition = new Vector3(-66, 516, 0);
         enemyUI.hpObj.transform.localPosition = new Vector3(0, 431, 0);
 
-        // レベル３くらいでも勝てるように.
+        // レベル３くらいでも上手いことやれば勝てるように.
         if (Player.Level <= 3)
         {
             this.maxHP = 350;
@@ -118,7 +120,7 @@ public class Jin : EnemyManager
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は怒り出した！" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
         DialogTextManager.instance.SetScenarios(new string[] { "危険な攻撃をくりだしてくる" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*2);
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         berserkMessaging = false;
     }
@@ -319,15 +321,42 @@ public class Jin : EnemyManager
         // breaking_a_glass(SE).
         SoundManager.instance.PlayButtonSE(12);
         DialogTextManager.instance.SetScenarios(new string[] { "氷のかたまりが迫る！"});
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
+        // 実質的な『アイスバーン』の処理.
         StartCoroutine(IceBurnDirecting());
-
         yield return new WaitWhile(() => iceBurnDirecting);
+
 
         enemy.buff = 0;     // かけておいたデバフを戻しておく.
         Player.DodgeCul(-2);
         charged = false;
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         BattleManager.EndOfEnemyTurn();
     }
 
@@ -398,7 +427,6 @@ public class Jin : EnemyManager
         if (!Player.Dead)
         {
             DialogTextManager.instance.SetScenarios(new string[] { "せまりくる氷をしのぎ切った！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
         }
 
         iceBurnDirecting = false;
@@ -421,7 +449,19 @@ public class Jin : EnemyManager
         Instantiate(pwrEffect, this.transform, false);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は\n力をためだした……" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed + 1.0f);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         BattleManager.EndOfEnemyTurn();
     }
@@ -450,7 +490,19 @@ public class Jin : EnemyManager
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は\n氷の壁をつくりだした" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed + 1.0f);
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの次の『こうげき』は\n 無効になります" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed* + 1.0f);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         if (berserkAtOnce&&Player.Level>=5)
         {
@@ -477,7 +529,19 @@ public class Jin : EnemyManager
         BattleManager.playerDamagePanel.DOShakePosition(0.3f, 0.5f, 20, 0, false, true);
         playerUI.UpdateUI(Player);  // PlayerのUIを更新.
         DialogTextManager.instance.SetScenarios(new string[] {"あなたは"+damage+" のダメージをうけた" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         enemy.buff = 0;
         BattleManager.EndOfEnemyTurn();
@@ -514,7 +578,19 @@ public class Jin : EnemyManager
         enemyUI.UpdateUI(enemy);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は回復呪文を唱えた" });
-        yield return new WaitForSeconds(2.0f);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         BattleManager.EndOfEnemyTurn();
     }
@@ -524,7 +600,19 @@ public class Jin : EnemyManager
         waited++;
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は 様子をみている" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         enemy.IsTurned = true;
         BattleManager.EndOfEnemyTurn();

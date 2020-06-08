@@ -10,6 +10,10 @@ public class SettingManager : MonoBehaviour
 
     private int messageSpeedNum;
     public int MessageSpeedNum { get => messageSpeedNum; set => messageSpeedNum = value; }
+    
+    [SerializeField]
+    private float particlePlaybackSpeed;
+    public float ParticlePlaybackSpeed { get => particlePlaybackSpeed; set => particlePlaybackSpeed = value; }
 
 
     #region Singleton
@@ -28,4 +32,6 @@ public class SettingManager : MonoBehaviour
         }
     }
     #endregion
+
+
 }

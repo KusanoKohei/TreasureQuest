@@ -28,9 +28,10 @@ public class QuestManager : MonoBehaviour
     public bool teated = false;
 
 
-    UserData Userdata => SaveSystem.Instance.UserData;
+    UserData Userdata => SaveSystem.instance.UserData;
     PlayerManager Player => PlayerManager.instance;
     SettingManager SettingManager => SettingManager.instance;
+    DialogTextManager Dialog => DialogTextManager.instance;
 
 
     #region Singleton
@@ -206,7 +207,21 @@ public class QuestManager : MonoBehaviour
         stageUI.ButtonUIAppearance(false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "街に戻るとクエストは\nやりなおしになります" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed *2);
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         DialogTextManager.instance.SetScenarios(new string[] { "本当に街に戻りますか？" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
@@ -249,7 +264,21 @@ public class QuestManager : MonoBehaviour
         stageUI.ButtonUIAppearance(false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "体力を1/3回復させます" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed * 2);
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         DialogTextManager.instance.SetScenarios(new string[] { "今回のクエストで一度しか使えません\n実行しますか？" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 

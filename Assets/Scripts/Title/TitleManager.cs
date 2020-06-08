@@ -12,8 +12,6 @@ public class TitleManager : MonoBehaviour
     [SerializeField]
     private CanvasGroup tapToStartCanvasGroup;
 
-    public PlayerManager player;
-
     private GameObject dialogWindow;
     private CanvasGroup dialogCanvas;
 
@@ -24,7 +22,8 @@ public class TitleManager : MonoBehaviour
 
     SceneTransitionManager sceneManager => SceneTransitionManager.instance;
 
-    UserData Userdata => SaveSystem.Instance.UserData;
+    UserData Userdata => SaveSystem.instance.UserData;
+    PlayerManager Player => PlayerManager.instance;
 
 
     // ------------------------------------ //
@@ -59,19 +58,56 @@ public class TitleManager : MonoBehaviour
     {
         if (active)
         {
-            player.Level = 1;
-            player.Init_playerParameter();
+            /*
+            // 状態異常の保持などに使っていたプレイヤーデータを削除する.
+            PlayerPrefs.DeleteAll();    // 危険？.
+
+            Player.Level = 1;
+            Player.Init_playerParameter();
             SoundManager.instance.PlayButtonSE(0);
+
+            sceneManager.LoadTo("Town");
+            */
+
+            /*
+            Userdata.messageSpeed = SettingManager.instance.MessageSpeed;
+            Userdata.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
+            Userdata.SEvolume = SoundManager.instance.audioSourceSE.volume;
+
+            SaveSystem.instance.Save();
+            */
+
+            SaveSystem.instance.Load();
+
+            Player.Level    = Userdata.level;
+            Player.MaxHP    = Userdata.maxHP;
+            Player.Hp       = Userdata.hp;
+            Player.Atk      = Userdata.atk;
+            Player.Spd      = Userdata.spd;
+            Player.Dodge    = Userdata.dodge;
+            Player.Critical = Userdata.critical;
+            Player.Skill    = Userdata.skill;
+            Player.NextEXP  = Userdata.nextEXP;
+            Player.NowEXP   = Userdata.nowEXP;
+            Player.Kurikoshi = Userdata.kurikoshi;
+
+            SettingManager.instance.MessageSpeed = Userdata.messageSpeed;
+            SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
+            SoundManager.instance.audioSourceSE.volume = Userdata.SEvolume;
+            
+
+            SoundManager.instance.PlayButtonSE(0);  // ボタンのクリック音.
 
             sceneManager.LoadTo("Town");
         }
     }
 
+    /*
     public void OnTapNewGameButton()
     {
-        // Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
-        // Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-        // Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
+        Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
+        Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
+        Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
 
         // 状態異常の保持などに使っていたプレイヤーデータを削除する.
         PlayerPrefs.DeleteAll();    // 危険？.
@@ -87,12 +123,13 @@ public class TitleManager : MonoBehaviour
             SoundManager.instance.audioSourceBGM.volume == 0 || 
             SoundManager.instance.audioSourceSE.volume == 0)
         {
-            // noticeBoard.SetActive(true);
-            // noticeText.text = ("セーブデータの設定を反映し\nメッセージ速度や音量を調整しています");
+            noticeBoard.SetActive(true);
+            noticeText.text = ("セーブデータの設定を反映し\nメッセージ速度や音量を調整しています");
         }
         else
         {
-            // noticeBoard.SetActive(false);
+            noticeBoard.SetActive(false);
         }
     }
+    */
 }

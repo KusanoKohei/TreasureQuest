@@ -43,3 +43,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1bd6852407b97847b25320356f58130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleName:
+  - {fileID: 7323006655800164622, guid: 076913e5b77814845aac609e13871313, type: 3}
+  - {fileID: 6246607673615325660, guid: 76e502da3529d78499df72a224f28163, type: 3}
+  - {fileID: 8402487121196338470, guid: bbcd70fe4837db74aaff0c53a17e0fd3, type: 3}
+  - {fileID: 259815737437262194, guid: 2c24d5db906e0b745a32fd99989ba01e, type: 3}
+  - {fileID: 1302569234031012273, guid: 62b6dda892631334f8bb32b2f2f53d68, type: 3}
+  tapToAttack: {fileID: 0}

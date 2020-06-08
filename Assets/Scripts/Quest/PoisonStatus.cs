@@ -34,11 +34,6 @@ public class PoisonStatus : MonoBehaviour
         // 生成されたら毒エフェクトをアタッチ.
         poisonEffect = Resources.Load<GameObject>("PoisonEffect");
 
-        // 毒アイコンをアタッチ.
-        poisonIcon = Resources.Load<GameObject>("PoisonIcon");
-
-        Vector3 iconPosition = new Vector3(0, 0, 0);
-
         StartCoroutine(PoisonAwake());
 
     }

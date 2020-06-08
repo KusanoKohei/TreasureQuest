@@ -10,6 +10,7 @@ public class C_Zombie : EnemyManager
     public GameObject poisonEffect;
 
     private BattleManager BattleManager => BattleManager.instance;
+    private DialogTextManager Dialog => DialogTextManager.instance;
 
     override protected void Start()
     {
@@ -89,7 +90,19 @@ public class C_Zombie : EnemyManager
     public IEnumerator ZombieConfused()
     {
         DialogTextManager.instance.SetScenarios(new string[] {this.name + "は ただウアウアとうなっている……" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         enemy.IsTurned = true;
         BattleManager.EndOfEnemyTurn();

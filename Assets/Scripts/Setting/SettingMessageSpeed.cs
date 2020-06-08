@@ -15,6 +15,15 @@ public class SettingMessageSpeed : MonoBehaviour
     private float normal;
     [SerializeField]
     private float fast;
+
+    [SerializeField]
+    private float p_slow;
+    [SerializeField]
+    private float p_normal;
+    [SerializeField]
+    private float p_fast;
+
+
     public enum Status
     {
         Slow,
@@ -25,6 +34,8 @@ public class SettingMessageSpeed : MonoBehaviour
     Status status;
 
     SettingManager SettingManager => SettingManager.instance;
+    PlayerManager PlayerManager => PlayerManager.instance;
+
 
     public float Slow { get => slow; set => slow = value; }
     public float Normal { get => normal; set => normal = value; }
@@ -33,55 +44,65 @@ public class SettingMessageSpeed : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CheckNum();
+        SwitchMessegaSpeed();
     }
 
-    void CheckNum()
+    void SwitchMessegaSpeed()
     {
-        if (SettingManager.instance.MessageSpeed == 1.5f)
+        if (num == 0)
         {
-            num = 0;
             SettingManager.MessageSpeed = Slow;
+            status = Status.Slow;
+            SettingManager.ParticlePlaybackSpeed = p_slow;
             buttonLabel.text = "遅い";
         }
-        else if (SettingManager.instance.MessageSpeed == 1.25f) 
+        else if (num == 1) 
         {
-            num = 1;
             SettingManager.MessageSpeed = Normal;
+            status = Status.Normal;
+            SettingManager.ParticlePlaybackSpeed = p_normal;
             buttonLabel.text = "ふつう";
         }
-        else if (SettingManager.instance.MessageSpeed == 1.0f)
+        else if (num == 2)
         {
-            num = 2;
             SettingManager.MessageSpeed = Fast;
+            status = Status.Fast;
+            SettingManager.ParticlePlaybackSpeed = p_fast;
             buttonLabel.text = "早い";
         }
+
+        SwitchParticleSpeed();
     }
 
-
-    private void switchLabel()
+   
+    private void SwitchParticleSpeed()
     {
-        switch (num)
+        if(status == Status.Slow)
         {
-            case 0:
-                status = Status.Slow;
-                buttonLabel.text = "遅い";
-                SettingManager.MessageSpeed = Slow;
-                break;
-
-            case 1:
-                status = Status.Normal;
-                buttonLabel.text = "ふつう";
-                SettingManager.MessageSpeed = Normal;
-                break;
-
-            case 2:
-                status = Status.Fast;
-                buttonLabel.text = "早い";
-                SettingManager.MessageSpeed = Fast;
-                break;
+            for(int i=0; i<=PlayerManager.ParticleName.Length-1; i++)
+            {
+                Debug.Log(PlayerManager.ParticleName[i]);
+                // PlayerManager.ParticleName[i].playbackSpeed = p_slow;
+            }
+        }
+        else if(status == Status.Normal)
+        {
+            for (int i = 0; i <= PlayerManager.ParticleName.Length-1; i++)
+            {
+                Debug.Log(PlayerManager.ParticleName[i]);
+                // PlayerManager.ParticleName[i].playbackSpeed = p_normal;
+            }
+        }
+        else if(status == Status.Fast)
+        {
+            for (int i = 0; i <= PlayerManager.ParticleName.Length-1; i++)
+            {
+                Debug.Log(PlayerManager.ParticleName[i]);
+                // PlayerManager.ParticleName[i].playbackSpeed = p_fast;
+            }
         }
     }
+    
 
     public void OnClick()
     {
@@ -92,7 +113,7 @@ public class SettingMessageSpeed : MonoBehaviour
             num = 0;
         }
 
-        switchLabel();
+        SwitchMessegaSpeed();
 
         // ボタンクリック音を鳴らす.
         SoundManager.instance.PlayButtonSE(0);

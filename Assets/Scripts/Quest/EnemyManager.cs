@@ -60,8 +60,9 @@ public class EnemyManager : MonoBehaviour
     string enemyType;
 
     public PlayerManager Player => PlayerManager.instance;
-
     private BattleManager BattleManager => BattleManager.instance;
+    private DialogTextManager Dialog => DialogTextManager.instance;
+
 
 
     virtual protected void Start()
@@ -149,8 +150,6 @@ public class EnemyManager : MonoBehaviour
 
     public void BackAttackBuff()
     {
-        Debug.Log("working");
-
         this.BackAttacking = true;
 
         buffSpd = (this.spd /3)*2;
@@ -174,8 +173,6 @@ public class EnemyManager : MonoBehaviour
     {
         NowActive = true;
 
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
-
         int damage;
 
         if (Player.DodgeRate(Player.Dodge))
@@ -194,6 +191,7 @@ public class EnemyManager : MonoBehaviour
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは見事にかわした！" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
         }
         else
         {
@@ -233,6 +231,18 @@ public class EnemyManager : MonoBehaviour
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは" + damage + "のダメージをうけた" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
         }
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         NowActive = false;
     }

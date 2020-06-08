@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -22,9 +21,12 @@ public class BattleManager : MonoBehaviour
     public bool PlayerDead { get => playerDead; set => playerDead = value; }
     public bool PoisonDirecting { get => poisonDirecting; set => poisonDirecting = value; }
 
+
     public PlayerManager Player => PlayerManager.instance;
 
+    public DialogTextManager Dialog => DialogTextManager.instance;
 
+    
     public static BattleManager instance;
 
 
@@ -83,30 +85,49 @@ public class BattleManager : MonoBehaviour
     {
         SoundManager.instance.PlayBGM("Battle"); 
         DialogTextManager.instance.SetScenarios(new string[] { "モンスターが現れた！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         int n = Random.Range(0, 7);
         if (n == 0)
         {
             Enemy.BackAttackBuff();
             DialogTextManager.instance.SetScenarios(new string[] { "不意打ちをうけてしまった！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*2);
+            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
         }
         else if (n == 1 || n == 2)
         {
             Player.BackAttackBuff();
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは敵のすきをついた！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*2);
+            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
          }
         else
         {
             DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "  が\n襲いかかってきた" });
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
         }
 
-        Debug.Log(DialogTextManager.instance.IsEnd);
-        
-        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd == true);
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
 
         CheckWhoseTurn();
     }
@@ -115,9 +136,23 @@ public class BattleManager : MonoBehaviour
     {
         SoundManager.instance.PlayBGM("BossBattle");
         DialogTextManager.instance.SetScenarios(new string[] { "ボスバトル！！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed+1.0f);
+        yield return new WaitForSeconds(2.0f);
         DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "  が\n襲いかかってきた！" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         CheckWhoseTurn();
     }
 
@@ -200,8 +235,6 @@ public class BattleManager : MonoBehaviour
             Enemy.critical -= Enemy.buffCritical;
             Enemy.spd -= Enemy.buffSpd;
         }
-
-        // yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
     
         yield return new WaitWhile(() => PoisonDirecting);
 
@@ -215,7 +248,7 @@ public class BattleManager : MonoBehaviour
     {
         string TAG = Enemy.gameObject.tag;
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         enemyUI.gameObject.SetActive(false);
 
@@ -226,9 +259,21 @@ public class BattleManager : MonoBehaviour
         }
 
         DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "を倒した！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*2);
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
-        if(TAG == "Boss")
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
+        if (TAG == "Boss")
         {
             questManager.GameClear();
         }

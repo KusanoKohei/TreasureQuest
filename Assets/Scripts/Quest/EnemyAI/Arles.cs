@@ -10,6 +10,8 @@ public class Arles : EnemyManager
     public GameObject poisonEffect;
 
     private BattleManager BattleManager => BattleManager.instance;
+    private DialogTextManager Dialog => DialogTextManager.instance;
+
     override protected void Start()
     {
         base.Start();   // 継承元のStart()が書き換えられないようにする。（参照元"SmileMeBaby!2.0  Player.cs").
@@ -72,10 +74,25 @@ public class Arles : EnemyManager
         SoundManager.instance.PlayButtonSE(8);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は 燃えさかる炎をはいた！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         if (Player.DodgeRate(Player.Dodge))
         {
+            // 回避音(SE).
+            SoundManager.instance.PlayButtonSE(3);
+
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは見事にかわした！" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
         }
@@ -91,6 +108,19 @@ public class Arles : EnemyManager
 
             enemy.buff = 0;
         }
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         BattleManager.EndOfEnemyTurn();
     }

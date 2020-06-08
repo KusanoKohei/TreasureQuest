@@ -42,6 +42,11 @@ public class PlayerManager : MonoBehaviour
 
     private bool dead = false;
 
+
+    [SerializeField]
+    private ParticleSystem[] particleName;
+
+
     public int MaxHP { get => maxHP; set => maxHP = value; }
     public int Level { get => level; set => level = value; }
     public int Hp { get => hp; set => hp = value; }
@@ -69,6 +74,7 @@ public class PlayerManager : MonoBehaviour
 
     public PoisonStatus Poison { get; set; }
     public bool Dead { get => dead; set => dead = value; }
+    public ParticleSystem[] ParticleName { get => particleName; set => particleName = value; }
 
 
 
@@ -82,8 +88,11 @@ public class PlayerManager : MonoBehaviour
 
     private SettingManager SettingManager => SettingManager.instance;
 
+    private DialogTextManager Dialog => DialogTextManager.instance;
+
 
     public GameObject tapToAttack;
+
 
 
     #region Singleton
@@ -308,8 +317,6 @@ public class PlayerManager : MonoBehaviour
     public IEnumerator PlayerAttackDirecting()
     {
         Enemy = BattleManager.instance.Enemy.GetComponent<EnemyManager>();
-
-        BattleManager.instance = GameObject.Find("BattleManager").GetComponent<BattleManager>();
         
         if (Enemy.Protection != null)
             {
@@ -330,7 +337,6 @@ public class PlayerManager : MonoBehaviour
     {
         int damage;
 
-        BattleManager.instance = GameObject.Find("BattleManager").GetComponent<BattleManager>();
         Enemy = BattleManager.Enemy.GetComponent<EnemyManager>();
 
         if (Enemy == null)
@@ -353,8 +359,6 @@ public class PlayerManager : MonoBehaviour
             DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed);
             DialogTextManager.instance.SetScenarios(new string[] { "だが、かわされてしまった！" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed * 1.0f);
-            NowActive = false;
         }
         else if (this.CriticalHit(Critical))
         {
@@ -367,8 +371,9 @@ public class PlayerManager : MonoBehaviour
             this.Critical = Level_ParameterManager.playerLevel[this.Level - 1, 6];
 
             // 会心の一撃のエフェクト.
-            GameObject criticalhitEffect = Resources.Load<GameObject>("CriticalHitEffect");
-            Instantiate(criticalhitEffect, Enemy.transform.position, Quaternion.identity);
+            // GameObject criticalHitEffect = Resources.Load<GameObject>("CriticalHitEffect");
+            GameObject criticalHitEffect = ParticleName[1].gameObject;
+            Instantiate(criticalHitEffect, Enemy.transform.position, Quaternion.identity);
 
             // 画面の振動.
             Enemy.transform.DOShakePosition(0.7f, 2.0f, 20, 0, false, true);
@@ -379,7 +384,6 @@ public class PlayerManager : MonoBehaviour
             yield return new WaitForSeconds(SettingManager.MessageSpeed/2);
             EnemyUI.UpdateUI(Enemy);
             DialogTextManager.instance.SetScenarios(new string[] { BattleManager.Enemy.name + "に" + damage + "のダメージを与えた" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
         // falseならば
         else
@@ -390,8 +394,10 @@ public class PlayerManager : MonoBehaviour
             SoundManager.instance.PlayButtonSE(1);
 
             // 通常の攻撃エフェクト.
-            GameObject attackhitEffect = Resources.Load<GameObject>("AttackHitEffect");
-            Instantiate(attackhitEffect, Enemy.transform.position, Quaternion.identity);
+            // GameObject attackHitEffect = Resources.Load<GameObject>("AttackHitEffect");
+            GameObject attackHitEffect = ParticleName[0].gameObject;
+            Instantiate(attackHitEffect, Enemy.transform.position, Quaternion.identity);
+
             // 画面の振動.
             Enemy.transform.DOShakePosition(0.3f, 0.3f, 20, 0, false, true);
 
@@ -399,9 +405,21 @@ public class PlayerManager : MonoBehaviour
             yield return new WaitForSeconds(SettingManager.MessageSpeed);
             EnemyUI.UpdateUI(Enemy);
             DialogTextManager.instance.SetScenarios(new string[] { BattleManager.Enemy.name + "に" + damage + "のダメージを与えた" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
 
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+        
+        
         NowActive = false;
     }
 
@@ -416,8 +434,6 @@ public class PlayerManager : MonoBehaviour
         // TapToAttack を非表示.
         tapToAttack.SetActive(false);
 
-        BattleManager.instance = GameObject.Find("BattleManager").GetComponent<BattleManager>();
-
         int n = UnityEngine.Random.Range(-1, 2);
 
         if (n == -1)
@@ -426,7 +442,17 @@ public class PlayerManager : MonoBehaviour
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは戦闘から逃げだした" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed);
             DialogTextManager.instance.SetScenarios(new string[] { "しかし逃げ切れなかった！" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed * 2.0f);
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
 
             BattleManager.EndOfPlayerTurn();
         }
@@ -487,7 +513,8 @@ public class PlayerManager : MonoBehaviour
             SoundManager.instance.PlayButtonSE(4);
 
             // 防御エフェクト.
-            GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
+            // GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
+            GameObject defenceEffect = ParticleName[2].gameObject;
             defenceEffect.transform.localPosition = new Vector3(0,-2,0);
             defenceEffect.transform.localScale = new Vector3(2, 2, 0);
             Instantiate(defenceEffect, this.transform, false);
@@ -499,7 +526,8 @@ public class PlayerManager : MonoBehaviour
             SoundManager.instance.PlayButtonSE(5);
 
             // 回復エフェクト.
-            GameObject healEffect = Resources.Load<GameObject>("HealEffect");
+            // GameObject healEffect = Resources.Load<GameObject>("HealEffect");
+            GameObject healEffect = ParticleName[3].gameObject;
             healEffect.transform.localPosition = new Vector3(0,-2,0);
             healEffect.transform.localScale = new Vector3(5, 5, 0);
             Instantiate(healEffect, this.transform, false);
@@ -510,6 +538,19 @@ public class PlayerManager : MonoBehaviour
 
             DialogTextManager.instance.SetScenarios(new string[] { "体力が少し回復した" });
             yield return new WaitForSeconds(2.0f);
+
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
             nowActive = false;
         }
         else if (Pwr == 2)
@@ -526,8 +567,9 @@ public class PlayerManager : MonoBehaviour
             // chargeEffect(SE).
             SoundManager.instance.PlayButtonSE(6);
 
-            // 防御エフェクト.
-            GameObject pwrEffect = Resources.Load<GameObject>("PwrEffect");
+            // ためエフェクト.
+            // GameObject pwrEffect = Resources.Load<GameObject>("PwrEffect");
+            GameObject pwrEffect = ParticleName[4].gameObject;
             pwrEffect.transform.localPosition = new Vector3(0,-2,0);
             pwrEffect.transform.localScale = new Vector3(5, 5, 0);
             Instantiate(pwrEffect, this.transform, false);
@@ -535,6 +577,20 @@ public class PlayerManager : MonoBehaviour
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは体中に力をためた！" });
             yield return new WaitForSeconds(2.0f);
+
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
+
             nowActive = false;
         }
         else if (Pwr == 3)
@@ -565,20 +621,43 @@ public class PlayerManager : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "ひっさつ技！！" });
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
         DialogTextManager.instance.SetScenarios(new string[] { "『 三所斬り 』\nの三連続攻撃！" });
-        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
+        // 実質的な『三所斬り』の処理.
         StartCoroutine(MitokorogiriDirecting());
-
         yield return new WaitWhile(() => mitokorogiriAction);
 
-        // バフ効果等を下げる.
+        // 『かまえる』『ためる』によるバフ効果等を下げる.
         this.Dodge = Level_ParameterManager.playerLevel[this.Level - 1, 5];
         this.Critical = Level_ParameterManager.playerLevel[this.Level - 1, 6];
 
         PlayerUI.UpdateSpcUI(this);
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたは ためた力を 使いはたした" });
-        yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
         nowActive = false;
     }
 
@@ -614,8 +693,19 @@ public class PlayerManager : MonoBehaviour
                 break;
             }
 
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed * 2);
-        
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
+
         }
 
         // 攻撃力を元に戻す.
@@ -681,9 +771,20 @@ public class PlayerManager : MonoBehaviour
         // UIの更新.
         playerUI.UpdateUI(this);
 
-        yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
 
-        if(this.Level == 2)
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
+        if (this.Level == 2)
         {
             DialogTextManager.instance.SetScenarios(new string[] { "『かまえる』『ためる』コマンドを\n使えるようになりました" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed*2);

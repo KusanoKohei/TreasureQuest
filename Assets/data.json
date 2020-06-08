@@ -1,1 +1,1 @@
-{"level":2,"maxHP":150,"hp":150,"atk":22,"spd":7,"dodge":1,"critical":1,"skill":1,"nextEXP":25,"nowEXP":1,"kurikoshi":0,"messageSpeed":1.5,"BGMvolume":0.5,"SEvolume":0.75}
+{"level":3,"maxHP":300,"hp":300,"atk":30,"spd":30,"dodge":0,"critical":5,"skill":2,"nextEXP":20,"nowEXP":0,"kurikoshi":0,"messageSpeed":1.5,"BGMvolume":0.5,"SEvolume":0.75}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SaveButton : MonoBehaviour
 {
-    UserData Userdata => SaveSystem.Instance.UserData;
+    UserData Userdata => SaveSystem.instance.UserData;
     PlayerManager Player => PlayerManager.instance;
     public void OnTapSaveButton()
     {
@@ -23,7 +23,7 @@ public class SaveButton : MonoBehaviour
         Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
         Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
 
-        SaveSystem.Instance.Save();
+        SaveSystem.instance.Save();
 
         SoundManager.instance.PlayButtonSE(0);  // ボタンのクリック音.
         DialogTextManager.instance.SetScenarios(new string[] { "セーブしました" });
