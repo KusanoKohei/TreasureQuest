@@ -41,6 +41,22 @@ public class SettingMessageSpeed : MonoBehaviour
     public float Normal { get => normal; set => normal = value; }
     public float Fast { get => fast; set => fast = value; }
 
+    #region Singleton
+    public static SettingMessageSpeed instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+    #endregion
+
     // Start is called before the first frame update
     void Start()
     {

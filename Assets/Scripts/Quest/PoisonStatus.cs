@@ -13,6 +13,7 @@ public class PoisonStatus : MonoBehaviour
     private QuestManager questManager;
 
     public GameObject poisonEffect;
+    private ParticleSystem poisonParticle;
 
     public GameObject poisonIcon;
 
@@ -27,12 +28,14 @@ public class PoisonStatus : MonoBehaviour
 
 
     BattleManager BattleManager => BattleManager.instance;
+    DialogTextManager Dialog => DialogTextManager.instance;
 
 
     private void Awake()
     {
         // 生成されたら毒エフェクトをアタッチ.
         poisonEffect = Resources.Load<GameObject>("PoisonEffect");
+        poisonParticle = poisonEffect.GetComponent<ParticleSystem>();
 
         StartCoroutine(PoisonAwake());
 
@@ -58,6 +61,19 @@ public class PoisonStatus : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの体に『毒』がまわった！" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         BattleManager.PoisonDirecting = false;
     }
 
@@ -71,24 +87,7 @@ public class PoisonStatus : MonoBehaviour
         Player.Damage(poisonDamage);
 
         questManager = GameObject.Find("QuestManager").GetComponent<QuestManager>();
-        // battleManager = GameObject.Find("BattleManager").GetComponent<BattleManager>();
 
-        /*
-        // 毒をうけた初回時にのみ表示させるダイアログ.
-        if (!PlayerPrefs.HasKey("Poisoned"))    // PlayerPrefsがこのキーを持っていなかったら
-        {
-            SaveDataInitialize();
-            Instantiate(poisonEffect, this.transform, false);   // 毒エフェクト.
-            
-            // 毒アイコンを生成するが、それはプレイヤーパネルの入れ子にする.
-            PoisonIconChild = Instantiate(poisonIcon) as GameObject;
-            PoisonIconChild.transform.SetParent(playerUIPanel.transform, false);
-            PoisonIconChild.transform.Translate(-4, 4, 0);
-            
-            DialogTextManager.instance.SetScenarios(new string[] { "あなたの体に『毒』がまわった！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
-        }
-        */
 
         // ヒット音(SE).
         SoundManager.instance.PlayButtonSE(1);
@@ -97,6 +96,19 @@ public class PoisonStatus : MonoBehaviour
         PlayerUI.UpdateUI(BattleManager.Player);
 
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         // プレイヤーの生死判定.
         if (player.Hp <= 0)

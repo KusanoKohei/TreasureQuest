@@ -53,6 +53,19 @@ public class ProtectionStatus : MonoBehaviour
         enemy.Protection = null;
         Destroy(GetComponent<ProtectionStatus>());  // プロテクションコンポーネントを削除.
 
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!Dialog.IsEnd)
+        {
+            Dialog.EnableClickIcon();
+        }
+
+        Dialog.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        Dialog.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         // breaking_a_glass(SE).
         SoundManager.instance.PlayButtonSE(12);
 
