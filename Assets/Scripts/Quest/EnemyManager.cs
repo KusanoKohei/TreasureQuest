@@ -188,10 +188,21 @@ public class EnemyManager : MonoBehaviour
 
             // ダメージを与えられず、回避のダイアログのコルーチン.
             DialogTextManager.instance.SetScenarios(new string[] { this.name + "の攻撃" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
-            DialogTextManager.instance.SetScenarios(new string[] { "あなたは見事にかわした！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
+
+            DialogTextManager.instance.SetScenarios(new string[] { "あなたは見事にかわした！" });
         }
         else
         {
@@ -208,9 +219,21 @@ public class EnemyManager : MonoBehaviour
                 SoundManager.instance.PlayButtonSE(2);
 
                 DialogTextManager.instance.SetScenarios(new string[] { this.name + "の攻撃" });
-                yield return new WaitForSeconds(SettingManager.instance.MessageSpeed/2);
+
+
+                // 画面がクリックされるまで次の処理を待つ.
+                if (!Dialog.IsEnd)
+                {
+                    Dialog.EnableClickIcon();
+                }
+
+                Dialog.ClickIconEnableAppear = true;
+                yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+                Dialog.ClickIconEnableAppear = false;
+                DialogTextManager.instance.clickImage.enabled = false;
+
+
                 DialogTextManager.instance.SetScenarios(new string[] { "会心の一撃！" });
-                yield return new WaitForSeconds(SettingManager.instance.MessageSpeed/2);
             }
             // falseならば
             else
@@ -223,13 +246,36 @@ public class EnemyManager : MonoBehaviour
                 damage = Attack(Player, buff);
 
                 DialogTextManager.instance.SetScenarios(new string[] { this.name + "の攻撃！" });
-                yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
             }
 
             playerUI.UpdateUI(Player);  // PlayerのUIを更新.
 
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
+
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは" + damage + "のダメージをうけた" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
         }
 
         // 画面がクリックされるまで次の処理を待つ.

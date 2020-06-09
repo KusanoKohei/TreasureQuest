@@ -9,22 +9,25 @@ using System;
 public class SaveSystem
 {
     // 参照元: https://teratail.com/questions/196913?link=qa_related_pc
+    //https://moon-bear.com/2019/03/23/%E3%80%90unity%E3%80%91json%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%82%BB%E3%83%BC%E3%83%96%E3%83%BB%E3%83%AD%E3%83%BC%E3%83%89%E5%87%A6%E7%90%86/
+  
     #region Singleton
     public static SaveSystem instance = new SaveSystem();
     #endregion
 
-    private UserData userData = new UserData();
+    // private UserData userData = new UserData();
+
+    private UserData userData;
     public UserData UserData { get => userData; set => userData = value; }
 
     private PlayerManager Player => PlayerManager.instance;
 
-    public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+    //public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+    public string Path => Application.persistentDataPath + "/"+".savedata.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
 
-
-    private void Start()
+    void Awake()
     {
-        Debug.Log(UnityEngine.Application.persistentDataPath);
-
+        userData = new UserData();
     }
     
     public void Save()
@@ -104,10 +107,11 @@ public class SaveSystem
 
         StreamReader reader = new StreamReader(Path);
         string jsonData = reader.ReadToEnd();
-        Debug.Log(jsonData);
-        UserData = JsonUtility.FromJson<UserData>(jsonData);
         reader.Close();
-    
+
+        UserData = JsonUtility.FromJson<UserData>(jsonData);
+
+
 #elif UNITY_ANDROID
         // Debug.Log("Load関数");
         if (!System.IO.File.Exists(UnityEngine.Application.persistentDataPath + "/saveData.txt"))
@@ -154,7 +158,7 @@ public class SaveSystem
         UserData = JsonUtility.FromJson<UserData>(jsonData);
         sr.Close();
 #endif
-}
+    }
 
     /*
     private SaveSystem() { Load(); }

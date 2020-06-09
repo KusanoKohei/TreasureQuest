@@ -22,16 +22,15 @@ public class TitleManager : MonoBehaviour
 
     SceneTransitionManager sceneManager => SceneTransitionManager.instance;
 
-    UserData Userdata => SaveSystem.instance.UserData;
+    SaveSystem SaveSystem => SaveSystem.instance;
+    UserData Userdata => SaveSystem.UserData;
     PlayerManager Player => PlayerManager.instance;
 
 
     // ------------------------------------ //
     private void Start()
     {
-        // SettingManager.instance.MessageSpeed        = Userdata.messageSpeed;
-        // SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
-        // SoundManager.instance.audioSourceSE.volume  = Userdata.SEvolume;
+        SaveSystem.Load();
 
         StartCoroutine(TapToStartImageAnimating());
 
@@ -58,27 +57,6 @@ public class TitleManager : MonoBehaviour
     {
         if (active)
         {
-            /*
-            // 状態異常の保持などに使っていたプレイヤーデータを削除する.
-            PlayerPrefs.DeleteAll();    // 危険？.
-
-            Player.Level = 1;
-            Player.Init_playerParameter();
-            SoundManager.instance.PlayButtonSE(0);
-
-            sceneManager.LoadTo("Town");
-            */
-
-            /*
-            Userdata.messageSpeed = SettingManager.instance.MessageSpeed;
-            Userdata.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
-            Userdata.SEvolume = SoundManager.instance.audioSourceSE.volume;
-
-            SaveSystem.instance.Save();
-            */
-
-            SaveSystem.instance.Load();
-
             Player.Level    = Userdata.level;
             Player.MaxHP    = Userdata.maxHP;
             Player.Hp       = Userdata.hp;

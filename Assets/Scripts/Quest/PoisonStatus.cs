@@ -59,7 +59,6 @@ public class PoisonStatus : MonoBehaviour
         playerUI.ToPoisonPanel();   // UIを毒状態表示にする.
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの体に『毒』がまわった！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -94,8 +93,6 @@ public class PoisonStatus : MonoBehaviour
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたは" + poisonDamage + "の毒のダメージをうけた" });
         PlayerUI.UpdateUI(BattleManager.Player);
-
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
 
         // 画面がクリックされるまで次の処理を待つ.
