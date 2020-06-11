@@ -26,11 +26,21 @@ public class TitleManager : MonoBehaviour
     UserData Userdata => SaveSystem.UserData;
     PlayerManager Player => PlayerManager.instance;
 
+    SettingManager SettingManager => SettingManager.instance;
+
 
     // ------------------------------------ //
     private void Start()
     {
         SaveSystem.Load();
+
+        Debug.Log(SaveSystem.instance.UserData.messageSpeed);
+        Debug.Log(SaveSystem.instance.UserData.BGMvolume);
+        Debug.Log(SaveSystem.instance.UserData.SEvolume);
+
+        SettingManager.MessageSpeed = SaveSystem.instance.UserData.messageSpeed;
+        SoundManager.instance.audioSourceBGM.volume = SaveSystem.instance.UserData.BGMvolume;
+        SoundManager.instance.audioSourceSE.volume = SaveSystem.instance.UserData.SEvolume;
 
         StartCoroutine(TapToStartImageAnimating());
 
@@ -68,10 +78,6 @@ public class TitleManager : MonoBehaviour
             Player.NextEXP  = Userdata.nextEXP;
             Player.NowEXP   = Userdata.nowEXP;
             Player.Kurikoshi = Userdata.kurikoshi;
-
-            SettingManager.instance.MessageSpeed = Userdata.messageSpeed;
-            SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
-            SoundManager.instance.audioSourceSE.volume = Userdata.SEvolume;
             
 
             SoundManager.instance.PlayButtonSE(0);  // ボタンのクリック音.

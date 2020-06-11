@@ -6,8 +6,21 @@ using UnityEngine.UI;
 public class SettingBGM : MonoBehaviour
 {
     public Text buttonLabel;
+
     private int num;
+    public int Num { get => num; set => num = value; }
+
     public AudioSource audioSource;
+
+
+    private float on = 0.5f;
+    public float On { get => on; set => on = value; }
+
+    private float off = 0.0f;
+    public float Off { get => off; set => off = value; }
+
+    private float max = 1.0f;
+    public float Max { get => max; set => max = value; }
 
 
     public enum Status
@@ -22,71 +35,98 @@ public class SettingBGM : MonoBehaviour
     SettingManager settingManager => SettingManager.instance;
 
 
+
+
+    #region Singleton
+    public static SettingBGM instance;
+
+    public void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+    #endregion
+
+
     // Start is called before the first frame update
     void Start()
     {
+        // Num = PlayerPrefs.GetInt("BGMvolumeNum", Num);
         CheckNum();
+        SwitchBGMvolume();
     }
 
-    void CheckNum()
+    private void CheckNum()
     {
-        if(SoundManager.instance.audioSourceBGM.volume == 0)
+        if(SaveSystem.instance.UserData.BGMvolume == On)
         {
-            num = 0;
-            status = Status.OFF;
-            buttonLabel.text = "OFF";
+            Num = 0;
         }
-        else if(SoundManager.instance.audioSourceBGM.volume == 0.5)
+        else if(SaveSystem.instance.UserData.BGMvolume == Off)
         {
-            num = 1;
-            status = Status.ON;
-            buttonLabel.text = "O N";
+            Num = 1;
         }
-        else if(SoundManager.instance.audioSourceBGM.volume == 1)
+        else if(SaveSystem.instance.UserData.BGMvolume == Max)
         {
-            num = 2;
-            status = Status.MAX;
-            buttonLabel.text = "MAX";
+            Num = 2;
+        }
+        else
+        {
+            Num = 0;
         }
     }
 
-    private void switchLabel()
+    public void SwitchBGMvolume()
     {
-        switch (num)
+        // Num = PlayerPrefs.GetInt("BGMvolumeNum", Num);
+
+        switch (Num)
         {
             case 0:
-                status = Status.OFF;
-                buttonLabel.text = "OFF";
-                SoundManager.instance.audioSourceBGM.volume = 0;    // BGM用のスピーカーを最小にする.
-                // audioSource.Stop();
-                break;
-
-            case 1:
                 status = Status.ON;
                 buttonLabel.text = "O N";
                 SoundManager.instance.audioSourceBGM.volume = 0.5f;    // BGM用のスピーカーを最大にする.
-                // audioSource.Play();
+                break;
+
+            case 1:
+                status = Status.OFF;
+                buttonLabel.text = "OFF";
+                SoundManager.instance.audioSourceBGM.volume = 0;    // BGM用のスピーカーを最小にする.
                 break;
 
             case 2:
                 status = Status.MAX;
                 buttonLabel.text = "MAX";
                 SoundManager.instance.audioSourceBGM.volume = 1f;    // BGM用のスピーカーを最大にする.
-                // audioSource.Play();
+                break;
+
+            default:
+                SoundManager.instance.audioSourceBGM.volume = 1.0f;
                 break;
         }
+
+        SaveSystem.instance.UserData.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
     }
 
     public void OnClick()
     {
-        num++;
+        Num++;
 
-        if (num >= 3)
+        if (Num >= 3)
         {
-            num = 0;
+            Num = 0;
         }
 
-        switchLabel();
+        PlayerPrefs.SetInt("BGMvolumeNum", Num);
+        PlayerPrefs.Save();
+
+        SwitchBGMvolume();
 
         // ボタンクリック音を鳴らす.
         SoundManager.instance.PlayButtonSE(0);

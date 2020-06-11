@@ -9,6 +9,12 @@ public class SettingSE : MonoBehaviour
     private int num;
     public AudioSource audioSource;
 
+    private float on = 0.75f;
+    public float On { get => on; set => on = value; }
+
+    private float off = 0.0f;
+    public float Off { get => off; set => off = value; }
+
 
     public enum Status
     {
@@ -22,6 +28,7 @@ public class SettingSE : MonoBehaviour
     SettingManager settingManager => SettingManager.instance;
 
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,13 +37,13 @@ public class SettingSE : MonoBehaviour
 
     private void CheckNum()
     {
-        if(SoundManager.instance.audioSourceSE.volume == 0)
+        if(SoundManager.instance.audioSourceSE.volume == Off)
         {
             num = 0;
             status = Status.OFF;
             buttonLabel.text = "OFF";
         }
-        else if(SoundManager.instance.audioSourceSE.volume == 0.75)
+        else if(SoundManager.instance.audioSourceSE.volume == On)
         {
             num = 1;
             status = Status.ON;
@@ -60,6 +67,8 @@ public class SettingSE : MonoBehaviour
                 SoundManager.instance.audioSourceSE.volume = 0.75f;    // BGM用のスピーカーを最大にする.
                 break;
         }
+
+        SaveSystem.instance.UserData.SEvolume = SoundManager.instance.audioSourceSE.volume;
     }
 
     public void OnClick()

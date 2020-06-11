@@ -15,15 +15,15 @@ public class SaveSystem
     public static SaveSystem instance = new SaveSystem();
     #endregion
 
-    // private UserData userData = new UserData();
 
     private UserData userData;
     public UserData UserData { get => userData; set => userData = value; }
 
     private PlayerManager Player => PlayerManager.instance;
 
-    //public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+    // public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
     public string Path => Application.persistentDataPath + "/"+".savedata.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+
 
     void Awake()
     {
@@ -32,41 +32,45 @@ public class SaveSystem
     
     public void Save()
     {
+        /*
 #if UNITY_EDITOR
 
         string jsonData = JsonUtility.ToJson(UserData);
+        Debug.Log(UserData.messageSpeed);
+        Debug.Log(UserData.BGMvolume);
         StreamWriter writer = new StreamWriter(Path, false);
         writer.WriteLine(jsonData);
         writer.Flush(); // 書き残し予防.
         writer.Close();
 
 #elif UNITY_ANDROID
+*/
         // ファイル書き出し.
         StreamWriter sw;
 
         if (System.IO.File.Exists(UnityEngine.Application.persistentDataPath + "/saveData.txt"))
         {
             // 第二引数をfalseにしているので、ファイルは上書きされる.
-            sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", false, Encoding.GetEncoding("Shift_JIS"));
-            // System.Text.Encoding.UTF8.
+            // sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", false, System.Text.Encoding.UTF8);
+            sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", false);
         }
         else
         {
-            sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", true, Encoding.GetEncoding("Shift_JIS"));
+            // sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", true, System.Text.Encodeing.UTF8);
+            sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", true);
         }
 
         string jsonData = JsonUtility.ToJson(UserData);
 
-        // 書き込み.
         sw.WriteLine(jsonData);
-        // 閉じる.
         sw.Flush();
         sw.Close();
-#endif
+// #endif
     }
 
     public void Load()
     {
+        /*
     #if UNITY_EDITOR
         if (!File.Exists(Path))
         {
@@ -91,10 +95,10 @@ public class SaveSystem
             UserData.nextEXP    = Player.NextEXP;
             UserData.nowEXP     = Player.NowEXP;
             UserData.kurikoshi  = Player.Kurikoshi;
-            UserData.messageSpeed   = SettingManager.instance.MessageSpeed;
-            UserData.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-            UserData.SEvolume       = SoundManager.instance.audioSourceSE.volume;
 
+            UserData.messageSpeed = SettingManager.instance.MessageSpeed;
+            UserData.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
+            UserData.SEvolume = SoundManager.instance.audioSourceSE.volume;
             // -----------------
 
             Save();
@@ -113,7 +117,7 @@ public class SaveSystem
 
 
 #elif UNITY_ANDROID
-        // Debug.Log("Load関数");
+*/
         if (!System.IO.File.Exists(UnityEngine.Application.persistentDataPath + "/saveData.txt"))
         {
             // 初回起動時.
@@ -152,12 +156,13 @@ public class SaveSystem
         }
 
         // ファイル読み込み.
-        StreamReader sr = new StreamReader(UnityEngine.Application.persistentDataPath, Encoding.GetEncoding("Shift_JIS"));
+        // StreamReader sr = new StreamReader(UnityEngine.Application.persistentDataPath, System.Text.Encoding.UTF8);
+        StreamReader sr = new StreamReader(Path);
         string jsonData = sr.ReadToEnd();
         Debug.Log(jsonData);
         UserData = JsonUtility.FromJson<UserData>(jsonData);
         sr.Close();
-#endif
+// #endif
     }
 
     /*

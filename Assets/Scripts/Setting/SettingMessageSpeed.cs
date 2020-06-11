@@ -8,13 +8,12 @@ public class SettingMessageSpeed : MonoBehaviour
     public Text buttonLabel;
 
     private int num;
+    public int Num { get => num; set => num = value; }
 
-    [SerializeField]
-    private float slow;
-    [SerializeField]
-    private float normal;
-    [SerializeField]
-    private float fast;
+
+    private float slow = 1.5f;
+    private float normal = 1.0f;
+    private float fast = 0.5f;
 
     [SerializeField]
     private float p_slow;
@@ -31,7 +30,7 @@ public class SettingMessageSpeed : MonoBehaviour
         Fast
     }
 
-    Status status;
+     public Status status;
 
     SettingManager SettingManager => SettingManager.instance;
     PlayerManager PlayerManager => PlayerManager.instance;
@@ -60,34 +59,59 @@ public class SettingMessageSpeed : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SwitchMessegaSpeed();
+        CheckNum();
+        SwitchMessagaSpeed();
     }
 
-    void SwitchMessegaSpeed()
+    void CheckNum()
     {
-        if (num == 0)
+        if(SaveSystem.instance.UserData.messageSpeed == Slow)
+        {
+            Num = 0;
+        }
+        else if(SaveSystem.instance.UserData.messageSpeed == Normal)
+        {
+            Num = 1;
+        }
+        else if(SaveSystem.instance.UserData.messageSpeed == Fast)
+        {
+            Num = 2;
+        }
+        else
+        {
+            Num = 0;
+        }
+
+    }
+
+
+    public void SwitchMessagaSpeed()
+    {
+        // Num = PlayerPrefs.GetInt("MessageSpeedNum", Num);
+
+        if (Num == 0)
         {
             SettingManager.MessageSpeed = Slow;
             status = Status.Slow;
-            SettingManager.ParticlePlaybackSpeed = p_slow;
+            // SettingManager.ParticlePlaybackSpeed = p_slow;
             buttonLabel.text = "遅い";
         }
-        else if (num == 1) 
+        else if (Num == 1) 
         {
             SettingManager.MessageSpeed = Normal;
             status = Status.Normal;
-            SettingManager.ParticlePlaybackSpeed = p_normal;
+            // SettingManager.ParticlePlaybackSpeed = p_normal;
             buttonLabel.text = "ふつう";
         }
-        else if (num == 2)
+        else if (Num == 2)
         {
             SettingManager.MessageSpeed = Fast;
             status = Status.Fast;
-            SettingManager.ParticlePlaybackSpeed = p_fast;
+            // SettingManager.ParticlePlaybackSpeed = p_fast;
             buttonLabel.text = "早い";
         }
 
-        SwitchParticleSpeed();
+        SaveSystem.instance.UserData.messageSpeed = SettingManager.MessageSpeed;
     }
 
    
@@ -97,7 +121,6 @@ public class SettingMessageSpeed : MonoBehaviour
         {
             for(int i=0; i<=PlayerManager.ParticleName.Length-1; i++)
             {
-                Debug.Log(PlayerManager.ParticleName[i]);
                 // PlayerManager.ParticleName[i].playbackSpeed = p_slow;
             }
         }
@@ -105,7 +128,6 @@ public class SettingMessageSpeed : MonoBehaviour
         {
             for (int i = 0; i <= PlayerManager.ParticleName.Length-1; i++)
             {
-                Debug.Log(PlayerManager.ParticleName[i]);
                 // PlayerManager.ParticleName[i].playbackSpeed = p_normal;
             }
         }
@@ -113,7 +135,6 @@ public class SettingMessageSpeed : MonoBehaviour
         {
             for (int i = 0; i <= PlayerManager.ParticleName.Length-1; i++)
             {
-                Debug.Log(PlayerManager.ParticleName[i]);
                 // PlayerManager.ParticleName[i].playbackSpeed = p_fast;
             }
         }
@@ -122,14 +143,17 @@ public class SettingMessageSpeed : MonoBehaviour
 
     public void OnClick()
     {
-        num++;
+        Num++;
 
-        if (num >= 3)
+        if (Num >= 3)
         {
-            num = 0;
+            Num = 0;
         }
 
-        SwitchMessegaSpeed();
+        PlayerPrefs.SetInt("MessageSpeedNum", Num);
+        PlayerPrefs.Save();
+
+        SwitchMessagaSpeed();
 
         // ボタンクリック音を鳴らす.
         SoundManager.instance.PlayButtonSE(0);

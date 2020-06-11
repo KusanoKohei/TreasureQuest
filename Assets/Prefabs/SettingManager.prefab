@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 810122123800300427}
   - component: {fileID: 327023126}
-  - component: {fileID: 2539932981059831889}
   m_Layer: 0
   m_Name: SettingManager
   m_TagString: Untagged
@@ -45,22 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   messageSpeed: 1.5
---- !u!114 &2539932981059831889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050360090350900724}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c32db2cfb2c99b4a949b51ec1f97aab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonLabel: {fileID: 0}
-  slow: 1.5
-  normal: 1
-  fast: 0.5
-  p_slow: 1
-  p_normal: 1
-  p_fast: 3
+  particlePlaybackSpeed: 0

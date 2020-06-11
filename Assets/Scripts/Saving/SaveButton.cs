@@ -19,9 +19,6 @@ public class SaveButton : MonoBehaviour
         Userdata.nextEXP        = Player.NextEXP;
         Userdata.nowEXP         = Player.NowEXP;
         Userdata.kurikoshi      = Player.Kurikoshi;
-        Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
-        Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-        Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
 
         SaveSystem.instance.Save();
 

@@ -10,13 +10,25 @@ public class SettingManager : MonoBehaviour
 
     private int messageSpeedNum;
     public int MessageSpeedNum { get => messageSpeedNum; set => messageSpeedNum = value; }
-    
+
     [SerializeField]
+    private float bgmVolume;
+    public float BgmVolume { get => bgmVolume; set => bgmVolume = value; }
+
+    [SerializeField]
+    private float seVolume; 
+    public float SeVolume { get => seVolume; set => seVolume = value; }
+
+
+    private SettingMessageSpeed SettingMessage => SettingMessageSpeed.instance;
+    private SettingBGM SettingBGM => SettingBGM.instance;
+    
     private float particlePlaybackSpeed;
     public float ParticlePlaybackSpeed { get => particlePlaybackSpeed; set => particlePlaybackSpeed = value; }
 
 
     #region Singleton
+
     public static SettingManager instance;
 
     private void Awake()
@@ -32,6 +44,4 @@ public class SettingManager : MonoBehaviour
         }
     }
     #endregion
-
-
 }

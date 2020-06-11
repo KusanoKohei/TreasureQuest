@@ -11,9 +11,6 @@ public class LoadButton : MonoBehaviour
     PlayerManager Player => PlayerManager.instance;
     public void OnTapLoadButton()
     {
-        Userdata.messageSpeed = SettingManager.instance.MessageSpeed;
-        Userdata.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
-        Userdata.SEvolume = SoundManager.instance.audioSourceSE.volume;
 
         SaveSystem.instance.Save();
 
@@ -30,10 +27,6 @@ public class LoadButton : MonoBehaviour
         Player.NextEXP  = Userdata.nextEXP;
         Player.NowEXP   = Userdata.nowEXP;
         Player.Kurikoshi = Userdata.kurikoshi;
-
-        SettingManager.instance.MessageSpeed        = Userdata.messageSpeed;
-        SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
-        SoundManager.instance.audioSourceSE.volume  = Userdata.SEvolume;
 
         SoundManager.instance.PlayButtonSE(0);  // ボタンのクリック音.
     }
