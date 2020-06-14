@@ -44,7 +44,7 @@ public class ProtectionStatus : MonoBehaviour
         // 防御エフェクト.
         GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
         defenceEffect.transform.Translate(0, 0, 0);
-        defenceEffect.transform.localScale = new Vector3(30, 30, 0);
+        defenceEffect.transform.localScale = new Vector3(2, 2, 0);
         Instantiate(defenceEffect, enemy.transform, false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "しかし氷の壁にはばまれた！" });

@@ -32,19 +32,13 @@ public class SaveSystem
     
     public void Save()
     {
-        /*
-#if UNITY_EDITOR
-
         string jsonData = JsonUtility.ToJson(UserData);
-        Debug.Log(UserData.messageSpeed);
-        Debug.Log(UserData.BGMvolume);
         StreamWriter writer = new StreamWriter(Path, false);
         writer.WriteLine(jsonData);
         writer.Flush(); // 書き残し予防.
         writer.Close();
-
-#elif UNITY_ANDROID
-*/
+        
+        /*
         // ファイル書き出し.
         StreamWriter sw;
 
@@ -65,13 +59,11 @@ public class SaveSystem
         sw.WriteLine(jsonData);
         sw.Flush();
         sw.Close();
-// #endif
+        */
     }
 
     public void Load()
     {
-        /*
-    #if UNITY_EDITOR
         if (!File.Exists(Path))
         {
             Debug.Log("初回起動時");
@@ -113,11 +105,10 @@ public class SaveSystem
         string jsonData = reader.ReadToEnd();
         reader.Close();
 
+        
         UserData = JsonUtility.FromJson<UserData>(jsonData);
 
-
-#elif UNITY_ANDROID
-*/
+        /*
         if (!System.IO.File.Exists(UnityEngine.Application.persistentDataPath + "/saveData.txt"))
         {
             // 初回起動時.
@@ -162,7 +153,7 @@ public class SaveSystem
         Debug.Log(jsonData);
         UserData = JsonUtility.FromJson<UserData>(jsonData);
         sr.Close();
-// #endif
+        */
     }
 
     /*

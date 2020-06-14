@@ -46,7 +46,7 @@ MonoBehaviour:
   particleName:
   - {fileID: 7323006655800164622, guid: 076913e5b77814845aac609e13871313, type: 3}
   - {fileID: 6246607673615325660, guid: 76e502da3529d78499df72a224f28163, type: 3}
-  - {fileID: 8402487121196338470, guid: bbcd70fe4837db74aaff0c53a17e0fd3, type: 3}
+  - {fileID: 19800000, guid: aa3fed151f536ee49b583c6a3ac4a2e1, type: 3}
   - {fileID: 259815737437262194, guid: 2c24d5db906e0b745a32fd99989ba01e, type: 3}
-  - {fileID: 1302569234031012273, guid: 62b6dda892631334f8bb32b2f2f53d68, type: 3}
+  - {fileID: 3010618505541945651, guid: b6620959a30ea7d459b14ad3c490823b, type: 3}
   tapToAttack: {fileID: 0}

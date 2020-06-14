@@ -322,7 +322,6 @@ public class PlayerManager : MonoBehaviour
             {
                 StartCoroutine(Enemy.Protection.ProtectionDirecting());
                 yield return new WaitWhile(() => Enemy.NowProtection);
-                PlayerManager.instance.NowActive = false;
             }
         else
             {
@@ -376,7 +375,13 @@ public class PlayerManager : MonoBehaviour
             Instantiate(criticalHitEffect, Enemy.transform.position, Quaternion.identity);
 
             // 画面の振動.
+            Vector3 enemyPosition = Enemy.transform.position;
             Enemy.transform.DOShakePosition(0.7f, 2.0f, 20, 0, false, true);
+
+            // 敵の位置が定位置からずれないように.
+            yield return new WaitForSeconds(0.7f);
+            Enemy.transform.position = enemyPosition;
+        
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed/2);
@@ -399,7 +404,13 @@ public class PlayerManager : MonoBehaviour
             Instantiate(attackHitEffect, Enemy.transform.position, Quaternion.identity);
 
             // 画面の振動.
+            Vector3 enemyPosition = Enemy.transform.position;
             Enemy.transform.DOShakePosition(0.3f, 0.3f, 20, 0, false, true);
+
+            // 敵の位置が定位置からずれないように.
+            yield return new WaitForSeconds(0.3f);
+            Enemy.transform.position = enemyPosition;
+
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃！" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed);

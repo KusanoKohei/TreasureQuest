@@ -40,6 +40,8 @@ public class DialogTextManager : MonoBehaviour
 
     public static DialogTextManager instance;
 
+
+
     private void Awake()
     {
         if (instance == null)

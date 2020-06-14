@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6080425859757648508}
   - component: {fileID: 6246607673615325660}
   - component: {fileID: 6246961272831144108}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CriticalHitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4620,7 +4620,7 @@ GameObject:
   - component: {fileID: 6088122027086952880}
   - component: {fileID: 6247226205182318654}
   - component: {fileID: 6246879997675365664}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CFX4 Stars Inner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9153,7 +9153,7 @@ GameObject:
   - component: {fileID: 6080645430764431210}
   - component: {fileID: 6247165424387346874}
   - component: {fileID: 6248571431347600802}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CFX4 Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13686,7 +13686,7 @@ GameObject:
   - component: {fileID: 6080432996610199588}
   - component: {fileID: 6247350163960845836}
   - component: {fileID: 6248624298622952670}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CFX4 Rays
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18183,7 +18183,7 @@ GameObject:
   - component: {fileID: 6080864925589875602}
   - component: {fileID: 6246602808089040708}
   - component: {fileID: 6246858824502417116}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CFX4 Inner Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7323006655800164622}
   - component: {fileID: 7323006655800277166}
   - component: {fileID: 7323006655808515470}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AttackHitEffect
   m_TagString: FxTemporaire
   m_Icon: {fileID: 0}

@@ -339,8 +339,6 @@ public class QuestManager : MonoBehaviour
     {
         stageUI.ButtonUIAppearance(true);
         SoundManager.instance.PlayBGM("Quest");
-
-        Debug.Log(PlayerManager.instance.Dead);
     }
 
     public IEnumerator GameOver()
