@@ -15,6 +15,7 @@ public class SaveSystem
     public static SaveSystem instance = new SaveSystem();
     #endregion
 
+    public static string SAVE_KEY;
 
     private UserData userData;
     public UserData UserData { get => userData; set => userData = value; }
@@ -22,7 +23,7 @@ public class SaveSystem
     private PlayerManager Player => PlayerManager.instance;
 
     // public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
-    public string Path => Application.persistentDataPath + "/"+".savedata.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
+    // public string Path => Application.persistentDataPath + "/"+".savedata.json";  // 保存場所は、Windows, C:/Users/xxxx/AppData/LocalLow/CompanyName/ProductName .
 
 
     void Awake()
@@ -30,41 +31,38 @@ public class SaveSystem
         userData = new UserData();
     }
     
+
+    /// <summary>
+    /// セーブ.
+    /// </summary>
     public void Save()
     {
-        string jsonData = JsonUtility.ToJson(UserData);
-        StreamWriter writer = new StreamWriter(Path, false);
-        writer.WriteLine(jsonData);
-        writer.Flush(); // 書き残し予防.
-        writer.Close();
-        
-        /*
-        // ファイル書き出し.
-        StreamWriter sw;
+        UserData.level      = Player.Level;
+        UserData.maxHP      = Player.MaxHP;
+        UserData.hp         = Player.Hp;
+        UserData.atk        = Player.Atk;
+        UserData.spd        = Player.Spd;
+        UserData.dodge      = Player.Dodge;
+        UserData.critical   = Player.Critical;
+        UserData.skill      = Player.Skill;
+        UserData.nextEXP    = Player.NextEXP;
+        UserData.nowEXP     = Player.NowEXP;
+        UserData.kurikoshi  = Player.Kurikoshi;
 
-        if (System.IO.File.Exists(UnityEngine.Application.persistentDataPath + "/saveData.txt"))
-        {
-            // 第二引数をfalseにしているので、ファイルは上書きされる.
-            // sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", false, System.Text.Encoding.UTF8);
-            sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", false);
-        }
-        else
-        {
-            // sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", true, System.Text.Encodeing.UTF8);
-            sw = new StreamWriter(UnityEngine.Application.persistentDataPath + "/saveData.txt", true);
-        }
+        UserData.messageSpeed = SettingManager.instance.MessageSpeed;
+        UserData.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
+        UserData.SEvolume = SoundManager.instance.audioSourceSE.volume;
 
         string jsonData = JsonUtility.ToJson(UserData);
-
-        sw.WriteLine(jsonData);
-        sw.Flush();
-        sw.Close();
-        */
+        ES3.Save<string>("SAVE_KEY", jsonData);
     }
 
+    /// <summary>
+    /// ロード.
+    /// </summary>
     public void Load()
     {
-        if (!File.Exists(Path))
+        if (!ES3.KeyExists("SAVE_KEY"))
         {
             Debug.Log("初回起動時");
             UserData = new UserData();
@@ -76,17 +74,17 @@ public class SaveSystem
             // プレイヤーのレベルを初期化しておく.
             PlayerManager.instance.Init_playerParameter();
 
-            UserData.level  = Player.Level;
-            UserData.maxHP  = Player.MaxHP;
-            UserData.hp     = Player.Hp;
-            UserData.atk    = Player.Atk;
-            UserData.spd    = Player.Spd;
-            UserData.dodge  = Player.Dodge;
-            UserData.critical   = Player.Critical;
-            UserData.skill      = Player.Skill;
-            UserData.nextEXP    = Player.NextEXP;
-            UserData.nowEXP     = Player.NowEXP;
-            UserData.kurikoshi  = Player.Kurikoshi;
+            UserData.level = Player.Level;
+            UserData.maxHP = Player.MaxHP;
+            UserData.hp = Player.Hp;
+            UserData.atk = Player.Atk;
+            UserData.spd = Player.Spd;
+            UserData.dodge = Player.Dodge;
+            UserData.critical = Player.Critical;
+            UserData.skill = Player.Skill;
+            UserData.nextEXP = Player.NextEXP;
+            UserData.nowEXP = Player.NowEXP;
+            UserData.kurikoshi = Player.Kurikoshi;
 
             UserData.messageSpeed = SettingManager.instance.MessageSpeed;
             UserData.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
@@ -101,120 +99,8 @@ public class SaveSystem
             Debug.Log("初回起動時ではない");
         }
 
-        StreamReader reader = new StreamReader(Path);
-        string jsonData = reader.ReadToEnd();
-        reader.Close();
+        string jsonData = ES3.Load<string>("SAVE_KEY");
 
-        
         UserData = JsonUtility.FromJson<UserData>(jsonData);
-
-        /*
-        if (!System.IO.File.Exists(UnityEngine.Application.persistentDataPath + "/saveData.txt"))
-        {
-            // 初回起動時.
-            Debug.Log("初回起動時");
-            UserData = new UserData();
-
-            Player.Level = 1;
-            // プレイヤーのレベルを初期化しておく.
-            PlayerManager.instance.Init_playerParameter();
-
-            UserData.level      = Player.Level;
-            UserData.maxHP      = Player.MaxHP;
-            UserData.hp         = Player.Hp;
-            UserData.atk        = Player.Atk;
-            UserData.spd        = Player.Spd;
-            UserData.dodge      = Player.Dodge;
-            UserData.critical   = Player.Critical;
-            UserData.skill      = Player.Skill;
-            UserData.nextEXP    = Player.NextEXP;
-            UserData.nowEXP     = Player.NowEXP;
-            UserData.kurikoshi  = Player.Kurikoshi;
-            UserData.messageSpeed   = SettingManager.instance.MessageSpeed;
-            UserData.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-            UserData.SEvolume       = SoundManager.instance.audioSourceSE.volume;
-
-            // -----------------
-
-            Save();
-            return;
-
-            // この初回起動時までの処理は上手くいっている。
-            // \C:user/Kusano Kohei / AppData / LocalLow / Kabakamon(CompanyNama)/ TreasureQuese(ProductName)
-            // に実際、saveData.txtが作成される現象も確認した.
-            // しかしこれ以降の読み込みが上手くいかないのか？
-            // 初回起動ではない場合は上手くいかない.
-        }
-
-        // ファイル読み込み.
-        // StreamReader sr = new StreamReader(UnityEngine.Application.persistentDataPath, System.Text.Encoding.UTF8);
-        StreamReader sr = new StreamReader(Path);
-        string jsonData = sr.ReadToEnd();
-        Debug.Log(jsonData);
-        UserData = JsonUtility.FromJson<UserData>(jsonData);
-        sr.Close();
-        */
     }
-
-    /*
-    private SaveSystem() { Load(); }
-
-    public string Path => Application.dataPath + "/data.json";  // セーブデータのファイルをAssetフォルダに置く（製作のしやすさから）.
-    // public string Path => Application.persistentDataPath+ "/data.json";  // WebGL版のセーブデータの保管先.
-
-    public string path => Application.streamingAssetsPath + "/data.json";
-
-
-    // private UserData userData = new UserData();
-    public UserData UserData{get; private set;}
-
-    private PlayerManager Player => PlayerManager.instance;
-
-    public void Save()
-    {
-        string jsonData = JsonUtility.ToJson(UserData);
-        StreamWriter writer = new StreamWriter(Path, false);
-        writer.WriteLine(jsonData);
-        writer.Flush(); // 書き残し予防.
-        writer.Close();
-    }
-
-    public void Load()
-    {
-        if(!File.Exists(Path))
-        {
-            Debug.Log("初回起動時");
-            UserData = new UserData();
-
-            // プレイヤーのレベルを初期化しておく.
-            PlayerManager.instance.Init_playerParameter();
-
-            UserData.level          = Player.Level;
-            UserData.maxHP          = Player.MaxHP;
-            UserData.hp             = Player.Hp;
-            UserData.atk            = Player.Atk;
-            UserData.spd            = Player.Spd;
-            UserData.dodge          = Player.Dodge;
-            UserData.critical       = Player.Critical;
-            UserData.skill          = Player.Skill;
-            UserData.nextEXP        = Player.NextEXP;
-            UserData.nowEXP         = Player.NowEXP;
-            UserData.kurikoshi      = Player.Kurikoshi;
-            UserData.messageSpeed   = SettingManager.instance.MessageSpeed;
-            UserData.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-            UserData.SEvolume       = SoundManager.instance.audioSourceSE.volume;
-
-            // -----------------
-
-            Save();
-            return;
-        }
-
-        StreamReader reader = new StreamReader(Path);
-        // StreamReader reader = new StreamReader(path);
-        string jsonData = reader.ReadToEnd();
-        UserData = JsonUtility.FromJson<UserData>(jsonData);
-        reader.Close();
-    }
-    */
 }

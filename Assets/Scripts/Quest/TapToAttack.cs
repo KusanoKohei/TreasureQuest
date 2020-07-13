@@ -38,6 +38,8 @@ public class TapToAttack : MonoBehaviour
         iconRect = icon.GetComponent<RectTransform>();
         this.canvasGroup = canvasGroup.GetComponent<CanvasGroup>();
 
+        text.SetActive(true);
+
         sequence = DOTween.Sequence();
         sequence.Append(iconRect.DOPunchPosition(new Vector3(0, -100, 0), 1.5f,3,3f,false))
             // .AppendInterval(0.5f)

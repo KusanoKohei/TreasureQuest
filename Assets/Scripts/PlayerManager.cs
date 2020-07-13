@@ -326,9 +326,9 @@ public class PlayerManager : MonoBehaviour
         else
             {
                 StartCoroutine(PlayerCommonAttack());
+                yield return new WaitWhile(() => NowActive);            // nowActiveがfalseになったら通す.
             }
 
-        yield return new WaitWhile(() => NowActive);            // nowActiveがfalseになったら通す.
         BattleManager.EndOfPlayerTurn();
     }
 
@@ -382,9 +382,6 @@ public class PlayerManager : MonoBehaviour
             yield return new WaitForSeconds(0.7f);
             Enemy.transform.position = enemyPosition;
         
-
-            DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed/2);
             DialogTextManager.instance.SetScenarios(new string[] { "会心の一撃！" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed/2);
             EnemyUI.UpdateUI(Enemy);
@@ -413,24 +410,24 @@ public class PlayerManager : MonoBehaviour
 
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃！" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+            
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
             EnemyUI.UpdateUI(Enemy);
             DialogTextManager.instance.SetScenarios(new string[] { BattleManager.Enemy.name + "に" + damage + "のダメージを与えた" });
         }
 
-
-        // 画面がクリックされるまで次の処理を待つ.
-        if (!Dialog.IsEnd)
-        {
-            Dialog.EnableClickIcon();
-        }
-
-        Dialog.ClickIconEnableAppear = true;
         yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-        Dialog.ClickIconEnableAppear = false;
-        DialogTextManager.instance.clickImage.enabled = false;
-        
-        
+
         NowActive = false;
     }
 
@@ -511,7 +508,17 @@ public class PlayerManager : MonoBehaviour
         if (Pwr == 1)
         {
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは みがまえた！" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
 
             // 効果.
             if (!this.DefenceMode)
@@ -530,8 +537,9 @@ public class PlayerManager : MonoBehaviour
             defenceEffect.transform.localScale = new Vector3(2, 2, 0);
             Instantiate(defenceEffect, this.transform, false);
 
-            DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "の\n次の攻撃にそなえた" });
-            yield return new WaitForSeconds(2.0f);
+            DialogTextManager.instance.SetScenarios(new string[] { "回避率が上昇した" });
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
 
             // healEffect(SE).
             SoundManager.instance.PlayButtonSE(5);
@@ -548,19 +556,11 @@ public class PlayerManager : MonoBehaviour
             PlayerUI.UpdateUI(this);            // HP回復量をPlayerUIに反映させる.
 
             DialogTextManager.instance.SetScenarios(new string[] { "体力が少し回復した" });
-            yield return new WaitForSeconds(2.0f);
 
+            yield return new WaitForSeconds(3.0f);
 
-            // 画面がクリックされるまで次の処理を待つ.
-            if (!Dialog.IsEnd)
-            {
-                Dialog.EnableClickIcon();
-            }
-
-            Dialog.ClickIconEnableAppear = true;
             yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-            Dialog.ClickIconEnableAppear = false;
-            DialogTextManager.instance.clickImage.enabled = false;
+
 
             nowActive = false;
         }
@@ -587,8 +587,6 @@ public class PlayerManager : MonoBehaviour
 
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは体中に力をためた！" });
-            yield return new WaitForSeconds(2.0f);
-
 
             // 画面がクリックされるまで次の処理を待つ.
             if (!Dialog.IsEnd)
@@ -601,6 +599,8 @@ public class PlayerManager : MonoBehaviour
             Dialog.ClickIconEnableAppear = false;
             DialogTextManager.instance.clickImage.enabled = false;
 
+            DialogTextManager.instance.SetScenarios(new string[] { "クリティカル率が上昇した" });
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
 
             nowActive = false;
         }
@@ -657,17 +657,7 @@ public class PlayerManager : MonoBehaviour
         PlayerUI.UpdateSpcUI(this);
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたは ためた力を 使いはたした" });
-
-        // 画面がクリックされるまで次の処理を待つ.
-        if (!Dialog.IsEnd)
-        {
-            Dialog.EnableClickIcon();
-        }
-
-        Dialog.ClickIconEnableAppear = true;
         yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-        Dialog.ClickIconEnableAppear = false;
-        DialogTextManager.instance.clickImage.enabled = false;
 
         nowActive = false;
     }
@@ -695,6 +685,8 @@ public class PlayerManager : MonoBehaviour
                 StartCoroutine(PlayerCommonAttack());
             }
 
+            // 後の攻撃ほどクリティカル率を増す.
+
             CriticalCul(3);
 
             // もし敵のHPが０ならば、処理を抜け出す.
@@ -704,18 +696,8 @@ public class PlayerManager : MonoBehaviour
                 break;
             }
 
-
-            // 画面がクリックされるまで次の処理を待つ.
-            if (!Dialog.IsEnd)
-            {
-                Dialog.EnableClickIcon();
-            }
-
-            Dialog.ClickIconEnableAppear = true;
-            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-            Dialog.ClickIconEnableAppear = false;
-            DialogTextManager.instance.clickImage.enabled = false;
-
+            // 今回は一撃ずつ処理を待つ.
+            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         }
 
@@ -799,16 +781,20 @@ public class PlayerManager : MonoBehaviour
         {
             DialogTextManager.instance.SetScenarios(new string[] { "『かまえる』『ためる』コマンドを\n使えるようになりました" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
-            DialogTextManager.instance.SetScenarios(new string[] { "あたなのターンの行動選択時に\n使うことができます" });
+            DialogTextManager.instance.SetScenarios(new string[] { "あなたのターン時に各コマンドのボタンが現れます" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
+
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
         }
 
         if (this.Level == 3)
         {
             DialogTextManager.instance.SetScenarios(new string[] { "『ひっさつ』コマンドを\n使えるようになりました" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
-            DialogTextManager.instance.SetScenarios(new string[] { "『ためる』コマンドの後に\n使えるようになります" });
+            DialogTextManager.instance.SetScenarios(new string[] { "『ためる』コマンドの後に\n行動の選択ができます" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
+
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
         }
 
         // エンカウントを振り直す.

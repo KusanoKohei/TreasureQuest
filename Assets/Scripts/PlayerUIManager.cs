@@ -41,7 +41,7 @@ public class PlayerUIManager : MonoBehaviour
         levelText.text = string.Format("LEVEL : {0}", player.Level);
         hpText.text = string.Format("HP : {0}", player.Hp);
 
-        if (player.Hp <= 0)
+        if (player.Hp<=0)
         {
             ToDeadPanel();
         }
@@ -108,6 +108,13 @@ public class PlayerUIManager : MonoBehaviour
     public void ToDeadPanel()
     {
         var deadUIColor = new Color(1.0f, 0.2f, 0.2f, 0.5f);
+
+        Image playerUIPanelImage = playerUIPanelShade.GetComponent<Image>();
+        playerUIPanelImage.DOColor(deadUIColor, 1.0f);
+    }
+    public void ToDownLevelPanel()
+    {
+        var deadUIColor = new Color(0.0f, 0.0f, 0.0f, 0.5f);
 
         Image playerUIPanelImage = playerUIPanelShade.GetComponent<Image>();
         playerUIPanelImage.DOColor(deadUIColor, 1.0f);

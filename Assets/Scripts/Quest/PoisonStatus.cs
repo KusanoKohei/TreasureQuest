@@ -22,13 +22,15 @@ public class PoisonStatus : MonoBehaviour
     private GameObject playerUIPanel;   // アイコンの親オブジェクトになるもの.
 
 
-    public PlayerManager Player { get => player; set => player = value; }
+    // public PlayerManager Player { get => player; set => player = value; }
     public PlayerUIManager PlayerUI { get => playerUI; set => playerUI = value; }
     public GameObject PoisonIconChild { get => poisonIconChild; set => poisonIconChild = value; }
 
 
     BattleManager BattleManager => BattleManager.instance;
     DialogTextManager Dialog => DialogTextManager.instance;
+
+    PlayerManager Player => PlayerManager.instance;
 
 
     private void Awake()
@@ -54,9 +56,11 @@ public class PoisonStatus : MonoBehaviour
         SoundManager.instance.PlayButtonSE(7);
 
         // 毒エフェクト.
-        Instantiate(poisonEffect, this.transform, false);   
+        Instantiate(poisonEffect, this.transform, false);
 
-        playerUI.ToPoisonPanel();   // UIを毒状態表示にする.
+        Debug.Log(Player);
+        playerUI.UpdateUI(Player);   // UIを毒状態表示にする.
+        playerUI.ToPoisonPanel();
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの体に『毒』がまわった！" });
 
@@ -82,7 +86,6 @@ public class PoisonStatus : MonoBehaviour
 
         count++;
 
-        Player = player;
         Player.Damage(poisonDamage);
 
         questManager = GameObject.Find("QuestManager").GetComponent<QuestManager>();

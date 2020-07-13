@@ -21,6 +21,8 @@ public class UserData
     public int nowEXP;
     public int kurikoshi;
 
+    public bool isCleared = false;
+
     public float messageSpeed;
     public float BGMvolume;
     public float SEvolume;

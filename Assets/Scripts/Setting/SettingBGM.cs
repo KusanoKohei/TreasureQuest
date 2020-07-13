@@ -57,7 +57,6 @@ public class SettingBGM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Num = PlayerPrefs.GetInt("BGMvolumeNum", Num);
         CheckNum();
         SwitchBGMvolume();
     }
@@ -84,8 +83,6 @@ public class SettingBGM : MonoBehaviour
 
     public void SwitchBGMvolume()
     {
-        // Num = PlayerPrefs.GetInt("BGMvolumeNum", Num);
-
         switch (Num)
         {
             case 0:

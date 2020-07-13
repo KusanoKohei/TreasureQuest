@@ -10,6 +10,10 @@ public class SettingButton : MonoBehaviour
     private GameObject settingIcon;
     [SerializeField]
     private GameObject settingBoard;
+    [SerializeField]
+    private GameObject panel;
+
+    Image panelColor;
 
     private RectTransform settingBoardPos;
     private Vector3 Pos = new Vector3(0,0,0);
@@ -17,6 +21,7 @@ public class SettingButton : MonoBehaviour
     private void Start()
     {
         settingBoardPos = settingBoard.GetComponent<RectTransform>();
+        panelColor = panel.GetComponent<Image>();
     }
 
 
@@ -29,6 +34,10 @@ public class SettingButton : MonoBehaviour
         }
         else if(!settingBoard.activeSelf)
         {
+            // SettingBoard の親のパネルをアクティブ.
+            panel.SetActive(true);
+            panelColor.color = new Color(1, 1, 1, 0);
+
             settingBoard.SetActive(true);
             settingBoardPos.DOScale(new Vector3(1, 1, 1), 0.5f);
             settingBoardPos.DOMove(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0), 0.5f);
@@ -50,6 +59,8 @@ public class SettingButton : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         settingBoard.SetActive(false);
+        panel.SetActive(false);
+
     }
 
     private IEnumerator OpenAction()

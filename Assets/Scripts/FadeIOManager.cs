@@ -33,6 +33,7 @@ public class FadeIOManager : MonoBehaviour
         dialogWindow = this.transform.Find("DialogUI").gameObject;
     }
 
+
     public void FadeOut()
     {
         canvasGroup.blocksRaycasts = true;

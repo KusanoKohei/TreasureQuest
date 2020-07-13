@@ -12,6 +12,9 @@ public class TownManager : MonoBehaviour
     public PlayerUIManager playerUI;
     public GameObject playerUIPanel;
 
+    public GameObject settingIcon;
+    public GameObject howToPlayButton;
+
     [SerializeField]
     private GameObject toQuestButton;
     [SerializeField]
@@ -20,7 +23,7 @@ public class TownManager : MonoBehaviour
 
     private void Start()
     {
-        playerUIPanel.transform.localPosition = new Vector3(-300, -300, 0);
+        playerUIPanel.transform.localPosition = new Vector3(-300, -450, 0);
         playerUI.SwitchActivateButton(Player.AllowedAction);    // 『にげる』『ためる』など。falseがデフォルト.
 
         fadeManager = GameObject.Find("FadeCanvas").GetComponent<FadeIOManager>();
@@ -65,6 +68,9 @@ public class TownManager : MonoBehaviour
 
     private IEnumerator TownRefresh()
     {
+        settingIcon.SetActive(false);
+        howToPlayButton.SetActive(false);
+        saveButton.SetActive(false);
         SetActiveTownButton(false);
 
         yield return new WaitForSeconds(0.2f);
@@ -86,6 +92,8 @@ public class TownManager : MonoBehaviour
             Player.Level -= 1;
 
             playerUI.UpdateUI(Player);
+            playerUI.ToDownLevelPanel();
+
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは負けて自信をなくし\nレベルが１下がった" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*3);
 
@@ -104,6 +112,7 @@ public class TownManager : MonoBehaviour
         hpGage.SetHPBar(Player.transform.root.gameObject);
 
         playerUI.UpdateUI(Player);
+        playerUI.ToNeutralPanel();
 
         playerUI.ToNeutralPanel();  // UIの表示を通常の状態に戻す.
         DialogTextManager.instance.SetScenarios(new string[] { "あなたはケガがなおるまで休み\n体力を回復させた" });
@@ -116,6 +125,10 @@ public class TownManager : MonoBehaviour
         Instantiate(healEffect, new Vector3(0,0,0), Quaternion.identity);
 
         yield return new WaitForSeconds(3.0f);
+
+        settingIcon.SetActive(true);
+        howToPlayButton.SetActive(true);
+        saveButton.SetActive(true);
         SetActiveTownButton(true);
     }
 

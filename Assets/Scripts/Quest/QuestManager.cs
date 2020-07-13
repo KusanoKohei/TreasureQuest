@@ -16,7 +16,7 @@ public class QuestManager : MonoBehaviour
     
     private GameObject dialogWindow;
     private PlayerUIManager playerUI;
-    private GameObject playerUIPanel;
+    public GameObject playerUIPanel;
     private FadeIOManager fadeManager;
 
     public int questNumber = 1; // クエストの種類.
@@ -54,11 +54,10 @@ public class QuestManager : MonoBehaviour
     {
         dialogWindow = GameObject.Find("DialogUI");
         playerUI = GameObject.Find("PlayerUICanvas").GetComponent<PlayerUIManager>();
-        playerUIPanel = GameObject.Find("PlayerUIPanel");
 
         playerUI.SetupUI(Player);
         playerUI.UpdateSpcUI(Player);
-        playerUIPanel.transform.localPosition = new Vector3(0, -500, 0);
+        playerUIPanel.transform.localPosition = new Vector3(0, -480, 0);
         playerUI.SwitchActivateButton(false);    // falseがデフォルト.   
 
         DialogTextManager.instance.SetScenarios(new string[] { "ダンジョンにたどりついた" });
@@ -206,7 +205,7 @@ public class QuestManager : MonoBehaviour
         // 進むなどのステージUIを消しておく.
         stageUI.ButtonUIAppearance(false);
 
-        DialogTextManager.instance.SetScenarios(new string[] { "街に戻るとクエストは\nやりなおしになります" });
+        DialogTextManager.instance.SetScenarios(new string[] { "街に戻ると体力は全快しますが\nクエストはやり直しになります" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
 
@@ -279,7 +278,7 @@ public class QuestManager : MonoBehaviour
         DialogTextManager.instance.clickImage.enabled = false;
 
 
-        DialogTextManager.instance.SetScenarios(new string[] { "今回のクエストで一度しか使えません\n実行しますか？" });
+        DialogTextManager.instance.SetScenarios(new string[] { "クエストごとに一度しか使えません\n実行しますか？" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         stageUI.YesNoButtonAppearance(true);
@@ -357,6 +356,9 @@ public class QuestManager : MonoBehaviour
 
     public void GameClear()
     {
+        // ゲームクリアフラグ.
+        Userdata.isCleared = true;
+
         StartCoroutine(GameClearDirecting());
     }
 
@@ -404,39 +406,26 @@ public class QuestManager : MonoBehaviour
 
         Player.PlayerInitPerBattleEnd();    // バトル終了ごとの初期化処理.
 
-        /*
         // ---- セーブ.
-        Userdata.level = Player.Level;
-        Userdata.maxHP = Player.MaxHP;
-        Userdata.hp = Player.Hp;
-        Userdata.atk = Player.Atk;
-        Userdata.spd = Player.Spd;
-        Userdata.dodge = Player.Dodge;
-        Userdata.critical = Player.Critical;
-        Userdata.skill = Player.Skill;
-        Userdata.nextEXP = Player.NextEXP;
-        Userdata.nowEXP = Player.NowEXP;
 
-        Userdata.messageSpeed = SettingManager.instance.MessageSpeed;
-        Userdata.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
-        Userdata.SEvolume = SoundManager.instance.audioSourceSE.volume;
-
-        SaveSystem.Instance.Save();
+        SaveSystem.instance.Save();
 
         // -----------
 
         DialogTextManager.instance.SetScenarios(new string[] { "クリアデータをセーブしました" });
         yield return new WaitForSeconds(2.0f);
 
-        DialogTextManager.instance.SetScenarios(new string[] { "タイトルの『つづきから』で\n現状の強さから再開できます" });
+        DialogTextManager.instance.SetScenarios(new string[] { "次回のゲームは現状の強さのまま\n再開できます" });
         yield return new WaitForSeconds(4.0f);
 
-        */
 
-        DialogTextManager.instance.SetScenarios(new string[] { "今後もこのゲームは\n様々な機能を実装する予定です" });
+        DialogTextManager.instance.SetScenarios(new string[] { "『ニューゲーム』ボタンが\nタイトル画面に出現しました" });
         yield return new WaitForSeconds(2.0f);
 
-        DialogTextManager.instance.SetScenarios(new string[] { "またクエストに\n挑戦しにきてください！" });
+        DialogTextManager.instance.SetScenarios(new string[] { "『ニューゲーム』では最初から\n冒険をやり直すことができます" });
+        yield return new WaitForSeconds(4.0f);
+
+        DialogTextManager.instance.SetScenarios(new string[] { "またクエストにチャレンジしにきてください！" });
         yield return new WaitForSeconds(4.0f);
 
         CanvasGroup dialogCanvas = dialogWindow.GetComponent<CanvasGroup>();

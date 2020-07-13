@@ -11,12 +11,15 @@ public class TitleManager : MonoBehaviour
     private GameObject tapToStartImage;
     [SerializeField]
     private CanvasGroup tapToStartCanvasGroup;
+    [SerializeField]
+    private GameObject newGameButton;
+
 
     private GameObject dialogWindow;
     private CanvasGroup dialogCanvas;
 
-    // public GameObject noticeBoard;
-    // public Text noticeText;
+    public GameObject noticeBoard;
+    public Text noticeText;
 
     bool active = false;
 
@@ -32,19 +35,18 @@ public class TitleManager : MonoBehaviour
     // ------------------------------------ //
     private void Start()
     {
+        // ロード.
         SaveSystem.Load();
 
-        Debug.Log(SaveSystem.instance.UserData.messageSpeed);
-        Debug.Log(SaveSystem.instance.UserData.BGMvolume);
-        Debug.Log(SaveSystem.instance.UserData.SEvolume);
+        SettingManager.instance.MessageSpeed        = Userdata.messageSpeed;
+        SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
+        SoundManager.instance.audioSourceSE.volume  = Userdata.SEvolume;
 
-        SettingManager.MessageSpeed = SaveSystem.instance.UserData.messageSpeed;
-        SoundManager.instance.audioSourceBGM.volume = SaveSystem.instance.UserData.BGMvolume;
-        SoundManager.instance.audioSourceSE.volume = SaveSystem.instance.UserData.SEvolume;
+        CheckCleared(); // ゲームクリア判定関数.
 
         StartCoroutine(TapToStartImageAnimating());
 
-        // CheckNotice();
+        CheckNotice();
 
         // ダイアログウィンドウを非表示にしておく.
         dialogWindow = GameObject.Find("FadeCanvas/DialogUI");
@@ -67,6 +69,8 @@ public class TitleManager : MonoBehaviour
     {
         if (active)
         {
+            SaveSystem.instance.Load();
+
             Player.Level    = Userdata.level;
             Player.MaxHP    = Userdata.maxHP;
             Player.Hp       = Userdata.hp;
@@ -78,7 +82,6 @@ public class TitleManager : MonoBehaviour
             Player.NextEXP  = Userdata.nextEXP;
             Player.NowEXP   = Userdata.nowEXP;
             Player.Kurikoshi = Userdata.kurikoshi;
-            
 
             SoundManager.instance.PlayButtonSE(0);  // ボタンのクリック音.
 
@@ -86,34 +89,33 @@ public class TitleManager : MonoBehaviour
         }
     }
 
-    /*
-    public void OnTapNewGameButton()
+
+    /// <summary>
+    /// ゲームクリアしていたなら、ニューゲームボタンを表示させる関数.
+    /// </summary>
+    private void CheckCleared()
     {
-        Userdata.messageSpeed   = SettingManager.instance.MessageSpeed;
-        Userdata.BGMvolume      = SoundManager.instance.audioSourceBGM.volume;
-        Userdata.SEvolume       = SoundManager.instance.audioSourceSE.volume;
-
-        // 状態異常の保持などに使っていたプレイヤーデータを削除する.
-        PlayerPrefs.DeleteAll();    // 危険？.
-
-        player.Level = 1;
-        player.Init_playerParameter();
-        SoundManager.instance.PlayButtonSE(0);
+        if (Userdata.isCleared)
+        {
+            newGameButton.SetActive(true);
+        }
+        else
+        {
+            newGameButton.SetActive(false);
+        }
     }
-
+    
     private void CheckNotice()
     {
-        if (SettingManager.instance.MessageSpeed == 2.0f || 
-            SoundManager.instance.audioSourceBGM.volume == 0 || 
+        if (SoundManager.instance.audioSourceBGM.volume == 0 || 
             SoundManager.instance.audioSourceSE.volume == 0)
         {
             noticeBoard.SetActive(true);
-            noticeText.text = ("セーブデータの設定を反映し\nメッセージ速度や音量を調整しています");
+            noticeText.text = ("セーブデータの設定を反映し\nBGMや効果音を無音にしています");
         }
         else
         {
             noticeBoard.SetActive(false);
         }
     }
-    */
 }
