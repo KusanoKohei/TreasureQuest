@@ -411,6 +411,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &471582518 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1807047291488528328, guid: 9351f6819b4774446ab561b1ee5b599e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1807047290273554742}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &599420512
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,6 +466,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &661701176 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3826718041160838681, guid: 9351f6819b4774446ab561b1ee5b599e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1807047290273554742}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &789611385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -697,12 +709,6 @@ CanvasGroup:
     type: 3}
   m_PrefabInstance: {fileID: 1807047290273554742}
   m_PrefabAsset: {fileID: 0}
---- !u!82 &1704461089 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 2364995036191132656, guid: dcded76547f44ea43ab028a694fedfef,
-    type: 3}
-  m_PrefabInstance: {fileID: 2364995036673088451}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2098019048
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,6 +775,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2106892345 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1807047290977119225, guid: 9351f6819b4774446ab561b1ee5b599e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1807047290273554742}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1807047290273554742
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -776,6 +788,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1807047289460040523, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: howToPlayButton
+      value: 
+      objectReference: {fileID: 2106892345}
+    - target: {fileID: 1807047289460040526, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1807047289600863380, guid: 9351f6819b4774446ab561b1ee5b599e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -896,16 +918,26 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 922154990}
-    - target: {fileID: 1807047289659755279, guid: 9351f6819b4774446ab561b1ee5b599e,
-        type: 3}
-      propertyPath: m_Text
-      value: 'Version : 1.07'
-      objectReference: {fileID: 0}
     - target: {fileID: 1807047290277824759, guid: 9351f6819b4774446ab561b1ee5b599e,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 599420513}
+    - target: {fileID: 1807047290391152950, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: settingBoard
+      value: 
+      objectReference: {fileID: 661701176}
+    - target: {fileID: 1807047290391152950, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: settingIcon
+      value: 
+      objectReference: {fileID: 471582518}
+    - target: {fileID: 1807047290391152950, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: howToPlayButton
+      value: 
+      objectReference: {fileID: 2106892345}
     - target: {fileID: 3826718041216557390, guid: 9351f6819b4774446ab561b1ee5b599e,
         type: 3}
       propertyPath: audioSource
@@ -980,25 +1012,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2364995036191132658, guid: dcded76547f44ea43ab028a694fedfef,
-        type: 3}
-      propertyPath: m_Volume
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 2364995036191132659, guid: dcded76547f44ea43ab028a694fedfef,
         type: 3}
       propertyPath: m_Name
       value: SoundManager
       objectReference: {fileID: 0}
-    - target: {fileID: 2364995036191132663, guid: dcded76547f44ea43ab028a694fedfef,
-        type: 3}
-      propertyPath: audioSourceBGM
-      value: 
-      objectReference: {fileID: 885389140}
-    - target: {fileID: 2364995036191132663, guid: dcded76547f44ea43ab028a694fedfef,
-        type: 3}
-      propertyPath: audioSourceSE
-      value: 
-      objectReference: {fileID: 1704461089}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dcded76547f44ea43ab028a694fedfef, type: 3}

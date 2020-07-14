@@ -179,11 +179,24 @@ public class BattleManager : MonoBehaviour
         enemy.IsTurned = true;
         enemy.Hitted = false;
         CheckPlayerAlive();             // プレイヤーのHPがまだ残っているかチェックする.
+        CheckWhitchTurn();
     }
 
     public void CheckPlayerAlive()
     {
         if (Player.Hp <= 0)
+        {
+            Player.Dead = true;
+        }
+        else
+        {
+            Player.Dead = false;
+        }
+    }
+
+    public void CheckWhitchTurn()
+    {
+        if (Player.Dead)
         {
             StartCoroutine(questManager.GameOver());
         }

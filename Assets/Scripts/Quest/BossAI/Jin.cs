@@ -122,6 +122,9 @@ public class Jin : EnemyManager
         DialogTextManager.instance.SetScenarios(new string[] { "危険な攻撃をくりだしてくる" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
+        // メッセージが表示しきるまで待つ.
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        
         berserkMessaging = false;
     }
 
@@ -206,16 +209,16 @@ public class Jin : EnemyManager
         int r;
         r = Random.Range(0, 11);
 
-        if (berserkMessaging)
-        {
-            r = 8;
-        }
-        else if (berserkAtOnce && Player.Level >= 5)
+        if (berserkAtOnce && Player.Level >= 5)
         {
             r = 10;
         }
+        else if(berserkAtOnce && Player.Level >= 4)
+        {
+            r = 8;
+        }
 
-        if (Player.Level <= 3)
+        if (!berserkAtOnce && Player.Level <= 3)
         {
             if (enemy.hp <= (enemy.maxHP / 6))
             {
@@ -244,6 +247,44 @@ public class Jin : EnemyManager
                     StartCoroutine(IceProtect());           // 氷の壁.
                 }
                 else if (r == 6)
+                {
+                    StartCoroutine(IceNiddle());            // アイスニードル. 
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
+        }
+        else if(berserkAtOnce && Player.Level>=4)
+        {
+            if (enemy.hp <= (enemy.maxHP / 4))
+            {
+                int d = Random.Range(0, 7);
+                if (d < 4)
+                {
+                    StartCoroutine(JinHealDirecting());
+                }
+                else
+                {
+                    StartCoroutine(JinCommonAttack());  // 通常攻撃.
+                }
+            }
+            else
+            {
+                if (charged)    // 事前に力をためていたなら.
+                {
+                    StartCoroutine(IceBurn());              // 必殺技『アイスバーン』.
+                }
+                else if ((r == 9) || (r == 10))
+                {
+                    StartCoroutine(ChargeDirecting());      // 必殺技前の溜め.
+                }
+                else if ((r == 7) || (r == 8))
+                {
+                    StartCoroutine(IceProtect());           // 氷の壁.
+                }
+                else if ((5 == r) || (r == 6))
                 {
                     StartCoroutine(IceNiddle());            // アイスニードル. 
                 }
@@ -316,11 +357,13 @@ public class Jin : EnemyManager
         SoundManager.instance.PlayButtonSE(9);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は 氷塊をつくり\n大爆発させた" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(1.5f);
 
         // breaking_a_glass(SE).
         SoundManager.instance.PlayButtonSE(12);
         DialogTextManager.instance.SetScenarios(new string[] { "氷のかたまりが迫る！"});
+
+        yield return new WaitForSeconds(1.5f);
 
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -422,7 +465,8 @@ public class Jin : EnemyManager
 
         // 下げておいたクリティカル率を戻す.
         enemy.critical = this.critical;
-        Debug.Log(enemy.critical);
+
+        BattleManager.CheckPlayerAlive();   // Playerが死んでいないか？
 
         if (!Player.Dead)
         {
@@ -430,6 +474,9 @@ public class Jin : EnemyManager
         }
 
         iceBurnDirecting = false;
+
+        yield return new WaitForSeconds(2.0f);
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
     }
 
     public IEnumerator ChargeDirecting()
@@ -449,19 +496,11 @@ public class Jin : EnemyManager
         Instantiate(pwrEffect, this.transform, false);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は\n力をためだした……" });
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
-
-        // 画面がクリックされるまで次の処理を待つ.
-        if (!Dialog.IsEnd)
-        {
-            Dialog.EnableClickIcon();
-        }
-
-        Dialog.ClickIconEnableAppear = true;
+        // メッセージが表示しきるまで待つ.
         yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-        Dialog.ClickIconEnableAppear = false;
-        DialogTextManager.instance.clickImage.enabled = false;
-
+        
 
         BattleManager.EndOfEnemyTurn();
     }

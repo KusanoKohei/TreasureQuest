@@ -764,6 +764,7 @@ public class PlayerManager : MonoBehaviour
         // UIの更新.
         playerUI.UpdateUI(this);
 
+        yield return new WaitForSeconds(2.0f);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)

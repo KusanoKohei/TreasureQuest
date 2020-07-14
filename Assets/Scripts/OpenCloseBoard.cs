@@ -103,6 +103,8 @@ public class OpenCloseBoard : MonoBehaviour
         if (board == newGameBoard || board == quitGameBoard)
         {
             shadeColor.color = new Color(0, 0, 0, 0.5f);
+            howToPlayButton.SetActive(false);
+            settingIcon.SetActive(false);
             yield return new WaitForSeconds(1.0f);
         }
         else if(board == creditBoard)

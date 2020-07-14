@@ -58,7 +58,6 @@ public class PoisonStatus : MonoBehaviour
         // 毒エフェクト.
         Instantiate(poisonEffect, this.transform, false);
 
-        Debug.Log(Player);
         playerUI.UpdateUI(Player);   // UIを毒状態表示にする.
         playerUI.ToPoisonPanel();
 

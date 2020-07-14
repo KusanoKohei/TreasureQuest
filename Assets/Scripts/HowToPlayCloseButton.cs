@@ -46,5 +46,7 @@ public class HowToPlayCloseButton : MonoBehaviour
                 howToPlayBoard[i].SetActive(false);
             }
         }
+        // ページめくりSE.
+        SoundManager.instance.PlayButtonSE(15);
     }
 }
