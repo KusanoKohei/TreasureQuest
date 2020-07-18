@@ -5,13 +5,13 @@ using DG.Tweening;
 
 public class BattleManager : MonoBehaviour
 {
-    public Transform                playerDamagePanel;
-    public QuestManager             questManager;
-    public PlayerUIManager          playerUI;
-    public EnemyUIManager           enemyUI;
-    
+    public Transform playerDamagePanel;
+    public QuestManager questManager;
+    public PlayerUIManager playerUI;
+    public EnemyUIManager enemyUI;
+
     private EnemyManager enemy;
-    
+
     public GameObject poisonEffect;
 
     private bool playerDead = false;
@@ -26,7 +26,7 @@ public class BattleManager : MonoBehaviour
 
     public DialogTextManager Dialog => DialogTextManager.instance;
 
-    
+
     public static BattleManager instance;
 
 
@@ -34,7 +34,7 @@ public class BattleManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -44,13 +44,13 @@ public class BattleManager : MonoBehaviour
         }
     }
     #endregion
-    
-    
+
+
     // Start is called before the first frame update
     private void Start()
     {
         playerUI = GameObject.Find("PlayerUICanvas").GetComponent<PlayerUIManager>();
-        
+
         enemyUI.gameObject.SetActive(false);
     }
 
@@ -65,8 +65,10 @@ public class BattleManager : MonoBehaviour
     public void SwitchBattleOpening(EnemyManager enemy)
     {
         // バトル開始時はプレイヤー、敵、どちらもターンを実行していないフラグをたてる.
-
         InitTurnFlag();
+
+        // バフ効果をかける.
+        CheckPlayerBuffer();
 
         // 敵プレハブのタグによってボスバトルかどうかを検出.
         switch (enemy.gameObject.tag)
@@ -83,7 +85,7 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator CommonBattleOpening()
     {
-        SoundManager.instance.PlayBGM("Battle"); 
+        SoundManager.instance.PlayBGM("Battle");
         DialogTextManager.instance.SetScenarios(new string[] { "モンスターが現れた！" });
 
 
@@ -111,7 +113,7 @@ public class BattleManager : MonoBehaviour
             Player.BackAttackBuff();
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは敵のすきをついた！" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
-         }
+        }
         else
         {
             DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "  が\n襲いかかってきた" });
@@ -231,7 +233,7 @@ public class BattleManager : MonoBehaviour
     {
         if (Player.Poison != null)  // 毒のインスタンスが生成されていたなら（毒状態なら）.
         {
-            StartCoroutine(Player.Poison.PoisonDirection(Player, (Player.MaxHP / 10)));
+            StartCoroutine(Player.Poison.PoisonDirection(Player));
         }
 
         if (Player.BackAttacking)
@@ -248,7 +250,7 @@ public class BattleManager : MonoBehaviour
             Enemy.critical -= Enemy.buffCritical;
             Enemy.spd -= Enemy.buffSpd;
         }
-    
+
         yield return new WaitWhile(() => PoisonDirecting);
 
         InitTurnFlag();
@@ -266,7 +268,7 @@ public class BattleManager : MonoBehaviour
         enemyUI.gameObject.SetActive(false);
 
 
-        if(Enemy!=null)
+        if (Enemy != null)
         {
             Destroy(Enemy.gameObject);
         }
@@ -303,17 +305,22 @@ public class BattleManager : MonoBehaviour
             EndBattleProcess();
 
             questManager.ReturnToQuest();
-        } 
+        }
     }
 
     public void EndBattleProcess()
     {
         Player.Pwr = 0;
 
+        /*
         if (Player.Poison != null)
         {
             Player.Poison.PoisonRefresh();  // 毒状態を治す.
         }
+        */
+
+        // バフの初期化.
+        InitPlayerBuffer();
 
         Player.PlayerInitPerBattleEnd();    // バトル終了時ごとに初期化される値.
         playerUI.UpdateSpcUI(Player);
@@ -327,5 +334,30 @@ public class BattleManager : MonoBehaviour
         Player.IsTurned = false;
         enemy.IsTurned = false;
         enemy.Hitted = false;
+    }
+
+    public void CheckPlayerBuffer()
+    {
+        if (Player.BuffStatus != null)
+        {
+            Player.Atk += Player.BuffStatus.BuffAtk;
+            Player.Spd += Player.BuffStatus.BuffSpd;
+            Player.CriticalCul(2);
+            Player.DodgeCul(1);
+        }
+    }
+
+    public void InitPlayerBuffer()
+    {
+        if(Player.BuffStatus != null)
+        {
+            // レベルに応じての初期化.
+            Player.Atk      = Level_ParameterManager.playerLevel[Player.Level - 1, 3];
+            Player.Spd      = Level_ParameterManager.playerLevel[Player.Level - 1, 4];
+            Player.Dodge    = Level_ParameterManager.playerLevel[Player.Level - 1, 5];
+            Player.Critical = Level_ParameterManager.playerLevel[Player.Level - 1, 6];
+        }
+
+        Destroy(Player.GetComponent<BuffStatus>());
     }
 }

@@ -411,14 +411,10 @@ public class Jin : EnemyManager
 
             if (Player.DefenceMode == false)
             {
-                Player.DodgeCul(2);    // 回避率を上げる. 『かまえる』で既に3上がっている可能性があるので上昇は2に抑える.
+                Player.DodgeCul(1);    // 回避率を上げる. 『かまえる』で既に3上がっている可能性があるので上昇は2に抑える.
             }
 
-            enemy.critical -= 1;
-            Debug.Log(enemy.critical);
-
             enemy.buff -= 15;
-            // player.Dodge = 0; // デバッグ用.
 
             // もし敵のHPが０ならば、処理を抜け出す.
             if (Player.Hp <= 0)

@@ -6,6 +6,8 @@ public class PoisonStatus : MonoBehaviour
 {
     private int count = 0;
 
+    private int poisonDamage;
+
     private PlayerManager player;
 
     private PlayerUIManager playerUI;
@@ -47,7 +49,7 @@ public class PoisonStatus : MonoBehaviour
     {
         BattleManager.PoisonDirecting = true;
 
-        PlayerUI = GameObject.Find("PlayerUICanvas").GetComponent<PlayerUIManager>();
+        playerUI = GameObject.Find("PlayerUICanvas").GetComponent<PlayerUIManager>();
         playerUIPanel = GameObject.Find("PlayerUIPanel");
 
         SaveDataInitialize();
@@ -58,7 +60,7 @@ public class PoisonStatus : MonoBehaviour
         // 毒エフェクト.
         Instantiate(poisonEffect, this.transform, false);
 
-        playerUI.UpdateUI(Player);   // UIを毒状態表示にする.
+        PlayerUIManager.instance.UpdateUI(Player);   // UIを毒状態表示にする.
         playerUI.ToPoisonPanel();
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの体に『毒』がまわった！" });
@@ -79,8 +81,10 @@ public class PoisonStatus : MonoBehaviour
         BattleManager.PoisonDirecting = false;
     }
 
-    public IEnumerator PoisonDirection(PlayerManager player, int poisonDamage)
+    public IEnumerator PoisonDirection(PlayerManager player)
     {
+        poisonDamage = Player.MaxHP / 20;
+
         BattleManager.instance.PoisonDirecting = true;
 
         count++;
@@ -94,20 +98,9 @@ public class PoisonStatus : MonoBehaviour
         SoundManager.instance.PlayButtonSE(1);
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたは" + poisonDamage + "の毒のダメージをうけた" });
-        PlayerUI.UpdateUI(BattleManager.Player);
+        PlayerUI.UpdateUI(Player);
 
-
-        // 画面がクリックされるまで次の処理を待つ.
-        if (!Dialog.IsEnd)
-        {
-            Dialog.EnableClickIcon();
-        }
-
-        Dialog.ClickIconEnableAppear = true;
-        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-        Dialog.ClickIconEnableAppear = false;
-        DialogTextManager.instance.clickImage.enabled = false;
-
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         // プレイヤーの生死判定.
         if (player.Hp <= 0)

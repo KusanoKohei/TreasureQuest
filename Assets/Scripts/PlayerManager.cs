@@ -73,6 +73,7 @@ public class PlayerManager : MonoBehaviour
 
 
     public PoisonStatus Poison { get; set; }
+    public BuffStatus BuffStatus { get; set; }
     public bool Dead { get => dead; set => dead = value; }
     public ParticleSystem[] ParticleName { get => particleName; set => particleName = value; }
 
@@ -89,7 +90,7 @@ public class PlayerManager : MonoBehaviour
     private SettingManager SettingManager => SettingManager.instance;
 
     private DialogTextManager Dialog => DialogTextManager.instance;
-
+    private QuestManager QuestManager => QuestManager.instance;
 
     public GameObject tapToAttack;
 
@@ -180,7 +181,9 @@ public class PlayerManager : MonoBehaviour
 
     public int Attack(EnemyManager enemy)
     {
+        // Playerの通常の攻撃力と、バフによる攻撃力加算をダメージとして割り上てる.
         int damage = BattleManager.Enemy.Damage(Atk);
+
         return damage;
     }
 
@@ -242,9 +245,9 @@ public class PlayerManager : MonoBehaviour
     {
         Dodge += add;
 
-        if (Dodge >= 10)
+        if (Dodge >= 5)
         { 
-            Dodge = 10; 
+            Dodge = 5; 
         }
         else if (Dodge <= 0)
         {
@@ -374,7 +377,7 @@ public class PlayerManager : MonoBehaviour
             GameObject criticalHitEffect = ParticleName[1].gameObject;
             Instantiate(criticalHitEffect, Enemy.transform.position, Quaternion.identity);
 
-            // 画面の振動.
+            // 敵の振動.
             Vector3 enemyPosition = Enemy.transform.position;
             Enemy.transform.DOShakePosition(0.7f, 2.0f, 20, 0, false, true);
 
@@ -467,10 +470,11 @@ public class PlayerManager : MonoBehaviour
         else
         {
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは戦闘から逃げだした" });
-            yield return new WaitForSeconds(SettingManager.MessageSpeed * 2);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
             BattleManager.EndBattleProcess();   // バトル終了時のやるべきことはやっておく（毒状態の解消とか）.
             BattleManager.InitTurnFlag();       // フラグを戻しておく.
+
 
             SceneTransitionManager sceneManager = GameObject.Find("SceneManager").GetComponent<SceneTransitionManager>();
             sceneManager.LoadTo("Town");    // 街へ戻る.

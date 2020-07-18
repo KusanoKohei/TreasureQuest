@@ -79,6 +79,7 @@ public class C_Zombie : EnemyManager
             if (r > 4)
             {
                 Player.Poison = Player.gameObject.AddComponent<PoisonStatus>();
+                Debug.Log(Player.Poison);
             }
             else
             {
@@ -89,8 +90,8 @@ public class C_Zombie : EnemyManager
 
     public IEnumerator ZombieConfused()
     {
-        DialogTextManager.instance.SetScenarios(new string[] {this.name + "は ただウアウアとうなっている……" });
-
+        DialogTextManager.instance.SetScenarios(new string[] {this.name + "は ただ\nウアウアとうなっている……" });
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)

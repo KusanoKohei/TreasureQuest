@@ -154,4 +154,18 @@ public class DialogTextManager : MonoBehaviour
         currentLine = 0;
         SetNextLine();
     }
+
+    public IEnumerator WaitClickMessage()
+    {
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!DialogTextManager.instance.IsEnd)
+        {
+            DialogTextManager.instance.EnableClickIcon();
+        }
+
+        DialogTextManager.instance.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        DialogTextManager.instance.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+    }
 }

@@ -7,7 +7,6 @@ using DG.Tweening;
 // クエストの進行を管理する.
 public class QuestManager : MonoBehaviour
 {
-    public StageUIManager stageUI;
     public GameObject[] enemyPrefab;
     public GameObject[] bossPrefab;
     public BattleManager battleManager;
@@ -15,7 +14,6 @@ public class QuestManager : MonoBehaviour
     public GameObject questBG;
     
     private GameObject dialogWindow;
-    private PlayerUIManager playerUI;
     public GameObject playerUIPanel;
     private FadeIOManager fadeManager;
 
@@ -25,13 +23,18 @@ public class QuestManager : MonoBehaviour
     int currentStage = 0;       // 現在のステージの進行度.
     private int selection=0;
     private bool selected = false;
-    public bool teated = false;
+    private bool teated = false;
 
 
     UserData Userdata => SaveSystem.instance.UserData;
     PlayerManager Player => PlayerManager.instance;
     SettingManager SettingManager => SettingManager.instance;
     DialogTextManager Dialog => DialogTextManager.instance;
+    StageUIManager StageUI => StageUIManager.instance;
+
+    public int Selection { get => selection; set => selection = value; }
+    public bool Selected { get => selected; set => selected = value; }
+    public bool Teated { get => teated; set => teated = value; }
 
 
     #region Singleton
@@ -45,23 +48,25 @@ public class QuestManager : MonoBehaviour
         }
         else
         {
-            Destroy(this.gameObject);
+            // Destroy(this.gameObject);
         }
     }
     #endregion
 
-    private void Start()
+    PlayerUIManager PlayerUI => PlayerUIManager.instance;
+
+
+    protected virtual void Start()
     {
         dialogWindow = GameObject.Find("DialogUI");
-        playerUI = GameObject.Find("PlayerUICanvas").GetComponent<PlayerUIManager>();
 
-        playerUI.SetupUI(Player);
-        playerUI.UpdateSpcUI(Player);
+        PlayerUI.SetupUI(Player);
+        PlayerUI.UpdateSpcUI(Player);
         playerUIPanel.transform.localPosition = new Vector3(0, -480, 0);
-        playerUI.SwitchActivateButton(false);    // falseがデフォルト.   
+        PlayerUI.SwitchActivateButton(false);    // falseがデフォルト.   
 
         DialogTextManager.instance.SetScenarios(new string[] { "ダンジョンにたどりついた" });
-        stageUI.updateUI(currentStage);
+        StageUI.UpdateUI(currentStage);
 
         SetEncount();   // エンカウント率を設定する.
     }
@@ -74,7 +79,7 @@ public class QuestManager : MonoBehaviour
         for (int i=0; i<encountTable.Length; i++)
         {
             int n = Random.Range(-2,2);
-            // int n = -2;  // デバッグ用;
+            // int n = -1;  // デバッグ用;
             encountTable[i] = n;
 
             if (Player.Level == 1 && encountTable[i] == 0)  // レベル１では強敵に出くわさない.
@@ -109,6 +114,14 @@ public class QuestManager : MonoBehaviour
         }
     }
 
+    public int ModoruStage(int modoruStage)
+    {
+        currentStage = currentStage - modoruStage;
+        StageUI.UpdateUI(currentStage);
+
+        return currentStage;
+    }
+
 
     IEnumerator Searching()
     {
@@ -122,34 +135,28 @@ public class QuestManager : MonoBehaviour
             .OnComplete(() => questBGSpriterenderer.DOFade(1, 0));
 
         // 時間遅延.
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.0f);
 
         currentStage++;
-        stageUI.updateUI(currentStage);
+        StageUI.UpdateUI(currentStage);
 
 
         if(currentStage == encountTable.Length)     // ダンジョンの一番奥では必ずボス戦を.
         {
+            // ボスとのエンカウント.
             EncountBoss();
         }
         else if(currentStage < encountTable.Length)
         {
-            if (encountTable[currentStage] >= 0)             // -1,-2であればエンカウントしない.
+            if (encountTable[currentStage] < 0)
             {
-                EncountEnemy(encountTable[currentStage]);
+                QuestEvent questEvent = this.GetComponent<QuestEvent>();
+                questEvent.EventRandom(currentStage, encountTable.Length);
             }
             else
             {
-                stageUI.ButtonUIAppearance(true);
-
-                if (currentStage >= encountTable.Length - 3)
-                {
-                    DialogTextManager.instance.SetScenarios(new string[] { "強い敵の気配がする……" });
-                }
-                else
-                {
-                    DialogTextManager.instance.SetScenarios(new string[] { "お宝も敵も見当たらない" });
-                }
+                // 敵とのエンカウント.
+                EncountEnemy(encountTable[currentStage]);
             }
         } 
     }
@@ -159,7 +166,7 @@ public class QuestManager : MonoBehaviour
         GameObject obj = Instantiate(bossPrefab[questNumber - 1]);
         EnemyManager enemy = obj.GetComponent<EnemyManager>();
         battleManager.Setup(enemy);         // 敵のUIの表示と、プレイヤーのタッチに反応するようにする.
-        stageUI.ButtonUIAppearance(false);  // ステージのUIを切る.
+        StageUI.ButtonUIAppearance(false);  // ステージのUIを切る.
         
         // バトルの開始のダイアログ.
         battleManager.SwitchBattleOpening(enemy);
@@ -172,7 +179,7 @@ public class QuestManager : MonoBehaviour
         GameObject obj= Instantiate(enemyPrefab[encountTableCurrentStage]);
         EnemyManager enemy = obj.GetComponent<EnemyManager>();
         battleManager.Setup(enemy);         // 敵のUIの表示と、プレイヤーのタッチに反応するようにする.
-        stageUI.ButtonUIAppearance(false);  // ステージのUIを切る.
+        StageUI.ButtonUIAppearance(false);  // ステージのUIを切る.
 
         // バトルの開始のダイアログ.
         battleManager.SwitchBattleOpening(enemy);
@@ -185,7 +192,7 @@ public class QuestManager : MonoBehaviour
         SoundManager.instance.PlayButtonSE(0);       // ボタンSEを鳴らす.
 
         // ボタン非表示.
-        stageUI.ButtonUIAppearance(false);
+        StageUI.ButtonUIAppearance(false);
 
         StartCoroutine(Searching());
 
@@ -200,10 +207,10 @@ public class QuestManager : MonoBehaviour
 
     private IEnumerator ToTownSelection()
     {
-        selected = false;
+        Selected = false;
 
         // 進むなどのステージUIを消しておく.
-        stageUI.ButtonUIAppearance(false);
+        StageUI.ButtonUIAppearance(false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "街に戻ると体力は全快しますが\nクエストはやり直しになります" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
@@ -224,27 +231,29 @@ public class QuestManager : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "本当に街に戻りますか？" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
-        stageUI.YesNoButtonAppearance(true);
+        StageUI.YesNoButtonAppearance(true);
 
-        yield return new WaitUntil(() => selected);
+        yield return new WaitUntil(() => Selected);
 
-        if (selection == 1)
+        if (Selection == 1)
         {
+            Selection = 0;
+
             SoundManager.instance.PlayButtonSE(0);
 
-            selection = 0;
-            teated = true;
+            Destroy(Player.GetComponent<BuffStatus>());     // バフを消しておく.
+            Teated = true;
             SceneTransitionManager.instance.LoadTo("Town");
         }
-        else if (selection == 2)
+        else if (Selection == 2)
         {
             SoundManager.instance.PlayButtonSE(0);
 
-            selection = 0;
+            Selection = 0;
 
             // 選択肢ボタンを消し、ステージを進行させるボタンを表示させる.
-            stageUI.YesNoButtonAppearance(false);
-            stageUI.ButtonUIAppearance(true);
+            StageUI.YesNoButtonAppearance(false);
+            StageUI.ButtonUIAppearance(true);
             DialogTextManager.instance.SetScenarios(new string[] { "" });
         }
 
@@ -257,13 +266,13 @@ public class QuestManager : MonoBehaviour
 
     private IEnumerator TeateSelectDirecting() 
     {
-        selected = false;
+        Selected = false;
 
         // 進むなどのステージUIを消しておく.
-        stageUI.ButtonUIAppearance(false);
+        StageUI.ButtonUIAppearance(false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "体力を1/3回復させます" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -279,64 +288,78 @@ public class QuestManager : MonoBehaviour
 
 
         DialogTextManager.instance.SetScenarios(new string[] { "クエストごとに一度しか使えません\n実行しますか？" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
-        stageUI.YesNoButtonAppearance(true);
+        StageUI.YesNoButtonAppearance(true);
 
-        yield return new WaitUntil(() => selected);
+        yield return new WaitUntil(() => Selected);
 
-        if (selection==1)
+        if (Selection==1)
         {
-            selection = 0;
-            teated = true;
+            // 選択肢ボタンを消す.
+            StageUI.YesNoButtonAppearance(false);
+            Selection = 0;
+            Teated = true;
+
+            DialogTextManager.instance.SetScenarios(new string[] { "あなたはケガの手当てをした" });
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
             StartCoroutine(HealDirecting());
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+ 
+            StageUI.ButtonUIAppearance(true);
         }
-        else if (selection==2)
+        else if (Selection==2)
         {
-            selection = 0;
+            Selection = 0;
 
             // 選択肢ボタンを消し、ステージを進行させるボタンを表示させる.
-            stageUI.YesNoButtonAppearance(false);
-            stageUI.ButtonUIAppearance(true);
+            StageUI.YesNoButtonAppearance(false);
+            StageUI.ButtonUIAppearance(true);
             DialogTextManager.instance.SetScenarios(new string[] { "" });
         }
     }
 
     public void OnClickYesButton()
     {
-        selection = 1;
-        selected = true;
+        Selection = 1;
+        Selected = true;
     }
 
     public void OnClickNoButton()
     {
-        Debug.Log("no");
-        selection = 2;
-        selected = true;
+        Selection = 2;
+        Selected = true;
     }
 
-    private IEnumerator HealDirecting()
+    public IEnumerator HealDirecting()
     {
-        DialogTextManager.instance.SetScenarios(new string[] { "あなたはケガの手当てをした" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
-        
         // healEffect(SE).
         SoundManager.instance.PlayButtonSE(5);
+        // 回復エフェクト/
+        GameObject healEffect = Resources.Load<GameObject>("HealEffect");
+        healEffect.transform.Translate(0, 1, 1);
+        healEffect.transform.localScale = new Vector3(5, 5, 0);
+        Instantiate(healEffect, new Vector3(0, 0, 0), Quaternion.identity);
+
 
         int healPoint = (int)Player.MaxHP / 3;
         Player.HpAdd(healPoint);
-        playerUI.UpdateUI(Player);
+        PlayerUI.UpdateUI(Player);
         DialogTextManager.instance.SetScenarios(new string[] { "体力が回復した" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
-        // 選択肢ボタンを消し、ステージを進行させるボタンを表示させる.
-        stageUI.YesNoButtonAppearance(false);
-        stageUI.ButtonUIAppearance(true);
+
+        // 毒を消しておく.
+        if(Player.Poison != null)
+        {
+            Player.Poison.PoisonRefresh();
+        }
     }
 
     public void ReturnToQuest()
     {
-        stageUI.ButtonUIAppearance(true);
+        StageUI.ButtonUIAppearance(true);
         SoundManager.instance.PlayBGM("Quest");
     }
 
@@ -345,6 +368,7 @@ public class QuestManager : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         Player.Dead = true;  // ゲームオーバーになったフラグ.(TownManagerで使う).
+        Destroy(Player.GetComponent<BuffStatus>());     // バフを消しておく.
 
         DialogTextManager.instance.SetScenarios(new string[]{
             "あなたは負けて、街へと引き返した……"
@@ -382,7 +406,7 @@ public class QuestManager : MonoBehaviour
         SoundManager.instance.StopBGM();    // BGMを停止させておく.
         SoundManager.instance.PlayButtonSE(13);
 
-        stageUI.ClearUIAppearance();        // 宝箱を表示、他のステージUIは切っておく.
+        StageUI.ClearUIAppearance();        // 宝箱を表示、他のステージUIは切っておく.
 
         DialogTextManager.instance.SetScenarios(new string[] { "宝物を見つけた！" });
         yield return new WaitForSeconds(4.0f);
@@ -395,7 +419,7 @@ public class QuestManager : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "トレジャーハンターのあなたは\n街へ戻ると" });
         yield return new WaitForSeconds(2.0f);
 
-        DialogTextManager.instance.SetScenarios(new string[] { "次のお宝を求めて旅だった……" });
+        DialogTextManager.instance.SetScenarios(new string[] { "次のお宝を求めて旅立った……" });
         yield return new WaitForSeconds(4.0f);
 
 

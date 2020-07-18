@@ -918,6 +918,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 922154990}
+    - target: {fileID: 1807047289869361992, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1807047290277824759, guid: 9351f6819b4774446ab561b1ee5b599e,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -938,6 +943,11 @@ PrefabInstance:
       propertyPath: howToPlayButton
       value: 
       objectReference: {fileID: 2106892345}
+    - target: {fileID: 1807047291452566274, guid: 9351f6819b4774446ab561b1ee5b599e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3826718041216557390, guid: 9351f6819b4774446ab561b1ee5b599e,
         type: 3}
       propertyPath: audioSource

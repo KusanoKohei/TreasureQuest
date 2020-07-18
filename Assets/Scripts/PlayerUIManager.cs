@@ -5,6 +5,23 @@ using UnityEngine.UI;
 
 public class PlayerUIManager : MonoBehaviour
 {
+    #region Singleton
+    public static PlayerUIManager instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+    #endregion
+    
+    
     public Text hpText;
     public Text levelText;
 
@@ -12,17 +29,10 @@ public class PlayerUIManager : MonoBehaviour
     public GameObject spcButton;
     public GameObject runButton;
 
-    private PlayerManager playerManager;
-
     public GameObject playerUIPanelShade;
 
     PlayerManager Player => PlayerManager.instance;
 
-    private void Start()
-    {
-        playerManager = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
-        
-    }
 
     public void SetupUI(PlayerManager player)
     {
@@ -67,20 +77,20 @@ public class PlayerUIManager : MonoBehaviour
 
     public void TapRunButton()
     {
-        if (!playerManager.AllowedAction) return;
+        if (!Player.AllowedAction) return;
 
         StopAllCoroutines();                          // 連打によるバグり防止の為.(108.参照).
 
-        StartCoroutine(playerManager.RunDirecting());
+        StartCoroutine(Player.RunDirecting());
     }
 
     public void TapSPCommandButton()
     {
-        if (!playerManager.AllowedAction) return;
+        if (!Player.AllowedAction) return;
 
         StopAllCoroutines();                          // 連打によるバグり防止の為.(108.参照).
 
-        StartCoroutine(playerManager.SpcDirecting());
+        StartCoroutine(Player.SpcDirecting());
     }
 
     public void SwitchActivateButton(bool activeButton)
