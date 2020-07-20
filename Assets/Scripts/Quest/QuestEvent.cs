@@ -104,7 +104,6 @@ public class QuestEvent : QuestManager
         // 毒ダメージ演出.
         if(Player.Poison != null)
         {
-            Debug.Log("毒状態だと認定されている");
             StartCoroutine(Player.Poison.PoisonDirection(Player));
             yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
@@ -118,6 +117,10 @@ public class QuestEvent : QuestManager
     // トラップイベント関数です.
     private IEnumerator TrapEvent(int currentStage)
     {
+        // エンカウントをリセットする（トラップでステージを戻っても同じパターンにはまらないように).
+        SetEncount();
+
+
         SoundManager.instance.PlayButtonSE(16); // ゴゴゴゴというSE.
         BattleManager.playerDamagePanel.DOShakePosition(2.0f, 1.0f, 20, 30f, false, true);
 
@@ -219,15 +222,14 @@ public class QuestEvent : QuestManager
 
         if (QuestManager.Selection == 1)
         {
-            // int n = Random.Range(0, 3);
-            int n = 0;  // デバッグ用;
+            int n = Random.Range(0, 3);
+            // int n = 0;  // デバッグ用;
             if (n == 0)
             {
                 // 毒.
                 if (!Player.Poison)
                 {
                     Player.Poison = Player.gameObject.AddComponent<PoisonStatus>();
-                    Debug.Log(Player.Poison);
                     yield return new WaitForSeconds(SettingManager.MessageSpeed);
                 }
                 else

@@ -153,11 +153,13 @@ public class PlayerManager : MonoBehaviour
     // バトル終了時ごとに初期化される処理.
     public void PlayerInitPerBattleEnd()
     {
+        /*  バトルの度に毒を無効にする処理を無効化.
         if (Poison != null)
         {
             GameObject.Destroy(Poison);
             PlayerPrefs.DeleteKey("Poisoned");
         }
+        */
 
         Pwr = 0;
         DefenceMode = false;
@@ -800,6 +802,12 @@ public class PlayerManager : MonoBehaviour
             yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
 
             yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        }
+
+        // 毒を治す.
+        if(Poison != null)
+        {
+            Poison.PoisonRefresh();
         }
 
         // エンカウントを振り直す.

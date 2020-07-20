@@ -91,7 +91,7 @@ public class C_Zombie : EnemyManager
     public IEnumerator ZombieConfused()
     {
         DialogTextManager.instance.SetScenarios(new string[] {this.name + "は ただ\nウアウアとうなっている……" });
-        yield return new WaitForSeconds(SettingManager.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)

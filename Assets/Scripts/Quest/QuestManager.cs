@@ -73,6 +73,8 @@ public class QuestManager : MonoBehaviour
 
     public void SetEncount()
     {
+        Debug.Log("エンカウントを設定した");
+
         // ステージ数を設定.
         encountTable = new int[MAX_STAGE]; 
 
@@ -139,7 +141,6 @@ public class QuestManager : MonoBehaviour
 
         currentStage++;
         StageUI.UpdateUI(currentStage);
-
 
         if(currentStage == encountTable.Length)     // ダンジョンの一番奥では必ずボス戦を.
         {
@@ -334,6 +335,8 @@ public class QuestManager : MonoBehaviour
 
     public IEnumerator HealDirecting()
     {
+        Debug.Log("HealDirecting");
+
         // healEffect(SE).
         SoundManager.instance.PlayButtonSE(5);
         // 回復エフェクト/
@@ -348,7 +351,6 @@ public class QuestManager : MonoBehaviour
         PlayerUI.UpdateUI(Player);
         DialogTextManager.instance.SetScenarios(new string[] { "体力が回復した" });
         yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
-
 
         // 毒を消しておく.
         if(Player.Poison != null)

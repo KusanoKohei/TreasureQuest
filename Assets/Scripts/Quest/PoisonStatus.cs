@@ -10,8 +10,6 @@ public class PoisonStatus : MonoBehaviour
 
     private PlayerManager player;
 
-    private PlayerUIManager playerUI;
-
     private QuestManager questManager;
 
     public GameObject poisonEffect;
@@ -25,7 +23,6 @@ public class PoisonStatus : MonoBehaviour
 
 
     // public PlayerManager Player { get => player; set => player = value; }
-    public PlayerUIManager PlayerUI { get => playerUI; set => playerUI = value; }
     public GameObject PoisonIconChild { get => poisonIconChild; set => poisonIconChild = value; }
 
 
@@ -33,7 +30,7 @@ public class PoisonStatus : MonoBehaviour
     DialogTextManager Dialog => DialogTextManager.instance;
 
     PlayerManager Player => PlayerManager.instance;
-
+    PlayerUIManager PlayerUI => PlayerUIManager.instance;
 
     private void Awake()
     {
@@ -49,10 +46,9 @@ public class PoisonStatus : MonoBehaviour
     {
         BattleManager.PoisonDirecting = true;
 
-        playerUI = GameObject.Find("PlayerUICanvas").GetComponent<PlayerUIManager>();
         playerUIPanel = GameObject.Find("PlayerUIPanel");
 
-        SaveDataInitialize();
+        // SaveDataInitialize();
 
         // Poison(SE).
         SoundManager.instance.PlayButtonSE(7);
@@ -61,7 +57,7 @@ public class PoisonStatus : MonoBehaviour
         Instantiate(poisonEffect, this.transform, false);
 
         PlayerUIManager.instance.UpdateUI(Player);   // UIを毒状態表示にする.
-        playerUI.ToPoisonPanel();
+        PlayerUI.ToPoisonPanel();
 
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの体に『毒』がまわった！" });
 
@@ -83,11 +79,14 @@ public class PoisonStatus : MonoBehaviour
 
     public IEnumerator PoisonDirection(PlayerManager player)
     {
+        Debug.Log(BattleManager.PoisonDirecting);
+        Debug.Log(Player.Poison);
+
         poisonDamage = Player.MaxHP / 20;
 
         BattleManager.instance.PoisonDirecting = true;
 
-        count++;
+        // count++;
 
         Player.Damage(poisonDamage);
 
@@ -109,10 +108,12 @@ public class PoisonStatus : MonoBehaviour
         }
         else
         {
+            /*
             if (count >= 3)
             {
 
             }
+            */
 
             BattleManager.PoisonDirecting = false;
         }
@@ -120,12 +121,15 @@ public class PoisonStatus : MonoBehaviour
 
     public void PoisonRefresh()
     {
+        Debug.Log("PoisonRefresh");
+
         // 毒状態を治す.
-
-        PlayerPrefs.DeleteKey("Poisoned");
+        // PlayerPrefs.DeleteKey("Poisoned");
+        
         Destroy(GetComponent<PoisonStatus>());  // 毒コンポーネントを削除.
+        Player.Poison = null;
 
-        playerUI.ToNeutralPanel();  // UIを毒状態から通常状態の表示へ.
+        PlayerUI.ToNeutralPanel();  // UIを毒状態から通常状態の表示へ.
 
         DialogTextManager.instance.SetScenarios(new string[] { "毒はしだいに治っていった" });
     }

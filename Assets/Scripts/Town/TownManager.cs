@@ -64,6 +64,12 @@ public class TownManager : MonoBehaviour
         dialogCanvas.ignoreParentGroups = true;
 
         DialogTextManager.instance.SetScenarios(new string[] { "街についた" });
+
+        // 毒を無効化.
+        if (Player.Poison != null)
+        {
+            Player.Poison.PoisonRefresh();
+        }
     }
 
     private IEnumerator TownRefresh()
@@ -97,7 +103,7 @@ public class TownManager : MonoBehaviour
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは負けて自信をなくし\nレベルが１下がった" });
             yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*3);
 
-            Player.Init_playerParameter(); // 経験値などもリセットされる.
+            Player.Init_playerParameter(); // 経験値などもリセットされる(HPなどもここで回復).
         }
         else
         {
@@ -106,15 +112,20 @@ public class TownManager : MonoBehaviour
 
         Player.PlayerInitPerBattleEnd();    // バトル終了ごとの初期化処理.
 
+        // 毒を無効化.
+        if (Player.Poison != null)
+        {
+            Player.Poison.PoisonRefresh();
+        }
+
+
         HPGage hpGage = GameObject.Find("HPGage").GetComponent<HPGage>();
         GameObject obj = Player.transform.root.gameObject;
 
         hpGage.SetHPBar(Player.transform.root.gameObject);
 
         playerUI.UpdateUI(Player);
-        playerUI.ToNeutralPanel();
 
-        playerUI.ToNeutralPanel();  // UIの表示を通常の状態に戻す.
         DialogTextManager.instance.SetScenarios(new string[] { "あなたはケガがなおるまで休み\n体力を回復させた" });
 
 
