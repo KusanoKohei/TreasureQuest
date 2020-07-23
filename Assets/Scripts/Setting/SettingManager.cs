@@ -6,7 +6,7 @@ public class SettingManager : MonoBehaviour
 {
     [SerializeField]
     private float messageSpeed;
-    public float MessageSpeed { get => messageSpeed; set => messageSpeed = value; }
+    public static float MessageSpeed { get => SettingManager.instance.messageSpeed; set => SettingManager.instance.messageSpeed = value; }
 
     private int messageSpeedNum;
     public int MessageSpeedNum { get => messageSpeedNum; set => messageSpeedNum = value; }

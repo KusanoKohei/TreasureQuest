@@ -94,7 +94,7 @@ public class Arles : EnemyManager
             SoundManager.instance.PlayButtonSE(3);
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは見事にかわした！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
         else
         {
@@ -104,7 +104,7 @@ public class Arles : EnemyManager
 
             playerUI.UpdateUI(Player);  // PlayerのUIを更新.
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは" + damage + " のダメージをうけた" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
             enemy.buff = 0;
         }

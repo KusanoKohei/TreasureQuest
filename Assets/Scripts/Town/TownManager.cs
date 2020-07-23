@@ -87,7 +87,7 @@ public class TownManager : MonoBehaviour
         dialogCanvas.ignoreParentGroups = true;
 
         DialogTextManager.instance.SetScenarios(new string[] { "街に帰りついた……" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*2);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
 
 
         if (Player.Level >= 2 && Player.Dead)
@@ -101,9 +101,10 @@ public class TownManager : MonoBehaviour
             playerUI.ToDownLevelPanel();
 
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは負けて自信をなくし\nレベルが１下がった" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed*3);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed*3);
 
             Player.Init_playerParameter(); // 経験値などもリセットされる(HPなどもここで回復).
+            playerUI.ToNeutralPanel();
         }
         else
         {

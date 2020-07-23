@@ -99,7 +99,7 @@ public class PoisonStatus : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "あなたは" + poisonDamage + "の毒のダメージをうけた" });
         PlayerUI.UpdateUI(Player);
 
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // プレイヤーの生死判定.
         if (player.Hp <= 0)
@@ -122,10 +122,7 @@ public class PoisonStatus : MonoBehaviour
     public void PoisonRefresh()
     {
         Debug.Log("PoisonRefresh");
-
-        // 毒状態を治す.
-        // PlayerPrefs.DeleteKey("Poisoned");
-        
+  
         Destroy(GetComponent<PoisonStatus>());  // 毒コンポーネントを削除.
         Player.Poison = null;
 

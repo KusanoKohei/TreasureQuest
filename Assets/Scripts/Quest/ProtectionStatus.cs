@@ -23,7 +23,7 @@ public class ProtectionStatus : MonoBehaviour
         SoundManager.instance.PlayButtonSE(3);
         
         DialogTextManager.instance.SetScenarios(new string[] { "あなたの攻撃" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -43,12 +43,12 @@ public class ProtectionStatus : MonoBehaviour
 
         // 防御エフェクト.
         GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
-        defenceEffect.transform.Translate(0, 0, 0);
+        defenceEffect.transform.position = new Vector3(0, 0, 0);
         defenceEffect.transform.localScale = new Vector3(2, 2, 0);
         Instantiate(defenceEffect, enemy.transform, false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "しかし氷の壁にはばまれた！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         enemy.Protection = null;
         Destroy(GetComponent<ProtectionStatus>());  // プロテクションコンポーネントを削除.
@@ -70,7 +70,8 @@ public class ProtectionStatus : MonoBehaviour
         SoundManager.instance.PlayButtonSE(12);
 
         DialogTextManager.instance.SetScenarios(new string[] { "氷の壁はくずれさった……" });
-       
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)

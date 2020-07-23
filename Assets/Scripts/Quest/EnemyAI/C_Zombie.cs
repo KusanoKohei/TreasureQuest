@@ -76,7 +76,7 @@ public class C_Zombie : EnemyManager
         {
             int r;
             r = Random.Range(0, 10);
-            if (r > 4)
+            if (r > 6)
             {
                 Player.Poison = Player.gameObject.AddComponent<PoisonStatus>();
                 Debug.Log(Player.Poison);
@@ -91,7 +91,7 @@ public class C_Zombie : EnemyManager
     public IEnumerator ZombieConfused()
     {
         DialogTextManager.instance.SetScenarios(new string[] {this.name + "は ただ\nウアウアとうなっている……" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)

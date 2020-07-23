@@ -7,7 +7,7 @@ public class SettingMessageSpeed : MonoBehaviour
 {
     public Text buttonLabel;
 
-    private int num;
+    private static int num;
     public int Num { get => num; set => num = value; }
 
 
@@ -60,90 +60,47 @@ public class SettingMessageSpeed : MonoBehaviour
     void Start()
     {
         CheckNum();
-        SwitchMessagaSpeed();
     }
 
     void CheckNum()
     {
-        if(SaveSystem.instance.UserData.messageSpeed == Slow)
-        {
-            Num = 0;
-        }
-        else if(SaveSystem.instance.UserData.messageSpeed == Normal)
-        {
-            Num = 1;
-        }
-        else if(SaveSystem.instance.UserData.messageSpeed == Fast)
-        {
-            Num = 2;
-        }
-        else
-        {
-            Num = 0;
-        }
+        Num = PlayerPrefs.GetInt("MessageSpeedNum", Num);
 
-    }
-
-
-    public void SwitchMessagaSpeed()
-    {
-        // Num = PlayerPrefs.GetInt("MessageSpeedNum", Num);
-
-        if (Num == 0)
+        if(Num == 0)
         {
             SettingManager.MessageSpeed = Slow;
             status = Status.Slow;
-            // SettingManager.ParticlePlaybackSpeed = p_slow;
             buttonLabel.text = "遅い";
         }
-        else if (Num == 1) 
+        else if(Num == 1)
         {
             SettingManager.MessageSpeed = Normal;
             status = Status.Normal;
-            // SettingManager.ParticlePlaybackSpeed = p_normal;
             buttonLabel.text = "ふつう";
         }
-        else if (Num == 2)
+        else if(Num == 2)
         {
             SettingManager.MessageSpeed = Fast;
             status = Status.Fast;
-            // SettingManager.ParticlePlaybackSpeed = p_fast;
             buttonLabel.text = "早い";
+        }
+        else
+        {
+            SettingManager.MessageSpeed = Slow;
+            status = Status.Slow;
+            buttonLabel.text = "遅い";
         }
 
         SaveSystem.instance.UserData.messageSpeed = SettingManager.MessageSpeed;
+        PlayerPrefs.SetInt("MessageSpeedNum", Num);
+        PlayerPrefs.Save();
     }
-
-   
-    private void SwitchParticleSpeed()
-    {
-        if(status == Status.Slow)
-        {
-            for(int i=0; i<=PlayerManager.ParticleName.Length-1; i++)
-            {
-                // PlayerManager.ParticleName[i].playbackSpeed = p_slow;
-            }
-        }
-        else if(status == Status.Normal)
-        {
-            for (int i = 0; i <= PlayerManager.ParticleName.Length-1; i++)
-            {
-                // PlayerManager.ParticleName[i].playbackSpeed = p_normal;
-            }
-        }
-        else if(status == Status.Fast)
-        {
-            for (int i = 0; i <= PlayerManager.ParticleName.Length-1; i++)
-            {
-                // PlayerManager.ParticleName[i].playbackSpeed = p_fast;
-            }
-        }
-    }
-    
 
     public void OnClick()
     {
         Num++;
+
+        Debug.Log(Num);
 
         if (Num >= 3)
         {
@@ -153,7 +110,8 @@ public class SettingMessageSpeed : MonoBehaviour
         PlayerPrefs.SetInt("MessageSpeedNum", Num);
         PlayerPrefs.Save();
 
-        SwitchMessagaSpeed();
+        CheckNum();
+        // SwitchMessagaSpeed();
 
         // ボタンクリック音を鳴らす.
         SoundManager.instance.PlayButtonSE(0);

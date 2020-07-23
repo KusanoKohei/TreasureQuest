@@ -29,7 +29,7 @@ public class BuffStatus : MonoBehaviour
     {
         SoundManager.instance.PlayButtonSE(6);  // チャージエフェクトSE.
 
-        DialogTextManager.instance.SetScenarios(new string[] { "あなたの能力が一時的に強化された" });
+        DialogTextManager.instance.SetScenarios(new string[] { "あなたの能力が一時的に上がった" });
         
         // エフェクトの静まり待ち.
         yield return new WaitForSeconds(2.0f);

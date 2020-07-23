@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class QuestEvent : QuestManager
 {
     private bool questEventEnded = false;
+
     QuestManager QuestManager => QuestManager.instance;
     BattleManager BattleManager => BattleManager.instance;
     PlayerManager Player => PlayerManager.instance;
@@ -18,7 +19,6 @@ public class QuestEvent : QuestManager
 
     public bool QuestEventEnded { get => questEventEnded; set => questEventEnded = value; }
 
-
     protected override void Start()
     {
         base.Start();
@@ -26,68 +26,140 @@ public class QuestEvent : QuestManager
 
     public void EventRandom(int currentStage, int encountTableLength)
     {
-        StageUI.ButtonUIAppearance(false);
+        int n = Random.Range(0, 10);
+        // int n = 3;  // デバッグ用.
+        Debug.Log(n);
 
-        int n = Random.Range(0, 14);
-        // int n = 9;  // デバッグ用.
-     
-        switch (n)
+        // 体力が低い時は少し優しめに.
+        if(Player.Hp <= (Player.MaxHP / 2))
         {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
+            Debug.Log("体力が低い時のイベント設定");
+            n = Random.Range(0, 4);
 
-                StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                
-                break;
-
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                if (currentStage < 2)
-                {
+            switch (n)
+            {
+                case 0:
+                case 1:
                     StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                }
-                else
-                {
-                    // トラップイベント.
-                    StartCoroutine(TrapEvent(currentStage));
-                }
+                    break;
 
-                break;
+                case 2:
+                    StartCoroutine(MushroomEvent());
+                    break;
 
-            case 9:
-            case 10:
-            case 11:
-                // キノコイベントです.
-                StartCoroutine(MushroomEvent());
+                case 3:
+                    StartCoroutine(HealAreaEvent());
+                    break;
 
-                break;
+                default:
+                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                    break;
+            }
+        }
+        else
+        {
+            switch (n)
+            {
+                case 0:
+                case 1:
+                case 2:
 
-            case 12:
-            case 13:
+                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
 
-                // もしHPが2/3より大きければ.
-                if(Player.Hp >= (Player.MaxHP*2/3))
-                {
-                    Debug.Log("回復の泉の再抽選");
-                    EventRandom(currentStage, encountTableLength);  // 再抽選. 
-                    return;
-                }
+                    break;
 
-                // 回復の泉イベントです.
-                StartCoroutine(HealAreaEvent());
+                case 3:
+                case 4:
+                case 5:
 
-                break;
+                    if (Player.Level >= 5)
+                    {
+                        if (currentStage < 2 || currentStage <= 8)
+                        {
+                            StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                        }
+                        else
+                        {
+                            StartCoroutine(TrapEvent(currentStage));
+                        }
+                    }
+                    else
+                    {
+                        if (currentStage < 2 || currentStage>=8)
+                        {
+                            Debug.Log("イベント無し");
+                            StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                        }
+                        else
+                        {
+                            // トラップイベント.
+                            Debug.Log("トラップイベント");
+                            StartCoroutine(TrapEvent(currentStage));
+                        }
+                    }
 
-            default:
-                StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                break;
+                    break;
+
+
+                case 6:
+                case 7:
+                    if(Player.Level >= 5)
+                    {
+                        int d = Random.Range(0, 2);
+                        if (d == 0)
+                        {
+                            EventRandom(currentStage, encountTableLength);  // 再抽選. 
+                        }
+                        else
+                        {
+                            // キノコイベントです.
+                            Debug.Log("キノコイベント");
+                            StartCoroutine(MushroomEvent());
+                        }
+                    }
+                    else
+                    {
+                        // キノコイベントです.
+                        Debug.Log("キノコイベント");
+                        StartCoroutine(MushroomEvent());
+                    }
+
+                    break;
+
+                case 8:
+                case 9:
+                
+                    // もしHPが4/5より大きければ.
+                    if (Player.Hp >= (Player.MaxHP * 4 / 5))
+                    {
+                        if (Player.Poison)  // しかしながら毒状態ならば.
+                        {
+                            // 回復の泉イベントです.
+                            StartCoroutine(HealAreaEvent());
+                        }
+                        else
+                        {
+                            Debug.Log("回復の泉の再抽選");
+                            EventRandom(currentStage, encountTableLength);  // 再抽選. 
+                        }
+                    }
+                    else
+                    {
+                        // 回復の泉イベントです.
+                        StartCoroutine(HealAreaEvent());
+                    }
+
+                    break;
+
+                default:
+                    Debug.Log("default");
+                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                    break;
+            }
+
         }
     }
+
 
     private IEnumerator NothingEvent(int currentStage, int encountTableLength)
     {
@@ -143,18 +215,6 @@ public class QuestEvent : QuestManager
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
 
-        // 画面がクリックされるまで次の処理を待つ.
-        if (!Dialog.IsEnd)
-        {
-            Dialog.EnableClickIcon();
-        }
-
-        Dialog.ClickIconEnableAppear = true;
-        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-        Dialog.ClickIconEnableAppear = false;
-        DialogTextManager.instance.clickImage.enabled = false;
-
-
         // 効果音を停めておく.
         SoundManager.audioSourceSE.Stop();
 
@@ -169,9 +229,20 @@ public class QuestEvent : QuestManager
         DialogTextManager.instance.SetScenarios(new string[] { "押しつぶされないように\n必死に逃げた！" });
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
-
         DialogTextManager.instance.SetScenarios(new string[] { "逃げ切れたが、いくぶんか来た道を\n戻ってしまったみたいだ……" });
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!DialogTextManager.instance.IsEnd)
+        {
+            DialogTextManager.instance.EnableClickIcon();
+        }
+
+        DialogTextManager.instance.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        DialogTextManager.instance.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
 
         // ステージUIの更新もここでやってくれます.
         QuestManager.ModoruStage(2);
@@ -223,7 +294,7 @@ public class QuestEvent : QuestManager
         if (QuestManager.Selection == 1)
         {
             int n = Random.Range(0, 3);
-            // int n = 0;  // デバッグ用;
+            // int n = 1;  // デバッグ用;
             if (n == 0)
             {
                 // 毒.
@@ -240,17 +311,68 @@ public class QuestEvent : QuestManager
             }
             else
             {
-                if (!Player.BuffStatus)
+                if (Player.Poison)
                 {
-                    DialogTextManager.instance.SetScenarios(new string[] { "キノコを食べたら体に力がみなぎってきた！" });
-                    Player.BuffStatus = Player.gameObject.AddComponent<BuffStatus>();
+                    DialogTextManager.instance.SetScenarios(new string[] { "毒消しキノコだったようだ" });
                     yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+                    // 画面がクリックされるまで次の処理を待つ.
+                    if (!DialogTextManager.instance.IsEnd)
+                    {
+                        DialogTextManager.instance.EnableClickIcon();
+                    }
+
+                    DialogTextManager.instance.ClickIconEnableAppear = true;
+                    yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+                    DialogTextManager.instance.ClickIconEnableAppear = false;
+                    DialogTextManager.instance.clickImage.enabled = false;
+
+                    StageUI.YesNoButtonAppearance(true);
+                    yield return new WaitUntil(() => QuestManager.Selected);
+                    StageUI.YesNoButtonAppearance(false);
+
+                    // 毒状態を治す.
+                    Player.Poison.PoisonRefresh();
                 }
                 else
                 {
-                    // 回復.
-                    StartCoroutine(HealDirecting());
-                    yield return new WaitForSeconds(SettingManager.MessageSpeed);
+                    if (!Player.BuffStatus)
+                    {
+                        DialogTextManager.instance.SetScenarios(new string[] { "キノコを食べたら体に力がみなぎってきた！" });
+                        Player.BuffStatus = Player.gameObject.AddComponent<BuffStatus>();
+                        yield return new WaitForSeconds(SettingManager.MessageSpeed);
+                    }
+                    else
+                    {
+                        if (Player.Poison)
+                        {
+                            DialogTextManager.instance.SetScenarios(new string[] { "毒消しキノコだったようだ" });
+                            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+                            // 画面がクリックされるまで次の処理を待つ.
+                            if (!DialogTextManager.instance.IsEnd)
+                            {
+                                DialogTextManager.instance.EnableClickIcon();
+                            }
+
+                            DialogTextManager.instance.ClickIconEnableAppear = true;
+                            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+                            DialogTextManager.instance.ClickIconEnableAppear = false;
+                            DialogTextManager.instance.clickImage.enabled = false;
+
+                            StageUI.YesNoButtonAppearance(true);
+                            yield return new WaitUntil(() => QuestManager.Selected);
+                            StageUI.YesNoButtonAppearance(false);
+
+                            // 毒状態を治す.
+                            Player.Poison.PoisonRefresh();
+                        }
+                        else
+                        {
+                            DialogTextManager.instance.SetScenarios(new string[] { "別にうまくも まずくもなかった" });
+                            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+                        }
+                    }
                 }
             }
         }
@@ -272,7 +394,7 @@ public class QuestEvent : QuestManager
     {
         SoundManager.instance.PlayButtonSE(17); // チャポンというSE.
         DialogTextManager.instance.SetScenarios(new string[] { "不思議な光を放つ泉が\nこんこんとわき出ている" });
-        yield return new WaitForSeconds(SettingManager.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed*2);
 
         DialogTextManager.instance.SetScenarios(new string[] { "少し休んでいきますか？" });
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
@@ -287,7 +409,6 @@ public class QuestEvent : QuestManager
         yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
         DialogTextManager.instance.ClickIconEnableAppear = false;
         DialogTextManager.instance.clickImage.enabled = false;
-
 
         StageUI.YesNoButtonAppearance(true);
         yield return new WaitUntil(() => QuestManager.Selected);

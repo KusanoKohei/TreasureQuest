@@ -106,18 +106,18 @@ public class BattleManager : MonoBehaviour
         {
             Enemy.BackAttackBuff();
             DialogTextManager.instance.SetScenarios(new string[] { "不意打ちをうけてしまった！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
         else if (n == 1 || n == 2)
         {
             Player.BackAttackBuff();
             DialogTextManager.instance.SetScenarios(new string[] { "あなたは敵のすきをついた！" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
         else
         {
             DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "  が\n襲いかかってきた" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
         }
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -140,7 +140,7 @@ public class BattleManager : MonoBehaviour
         DialogTextManager.instance.SetScenarios(new string[] { "ボスバトル！！" });
         yield return new WaitForSeconds(2.0f);
         DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "  が\n襲いかかってきた！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -178,6 +178,8 @@ public class BattleManager : MonoBehaviour
 
     public void EndOfEnemyTurn()
     {
+        Debug.Log("BattleManager > EndOfEnemyTurn()");
+
         enemy.IsTurned = true;
         enemy.Hitted = false;
         CheckPlayerAlive();             // プレイヤーのHPがまだ残っているかチェックする.
@@ -263,7 +265,7 @@ public class BattleManager : MonoBehaviour
     {
         string TAG = Enemy.gameObject.tag;
 
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         enemyUI.gameObject.SetActive(false);
 
@@ -274,7 +276,7 @@ public class BattleManager : MonoBehaviour
         }
 
         DialogTextManager.instance.SetScenarios(new string[] { Enemy.name + "を倒した！" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)
@@ -312,15 +314,8 @@ public class BattleManager : MonoBehaviour
     {
         Player.Pwr = 0;
 
-        /*
-        if (Player.Poison != null)
-        {
-            Player.Poison.PoisonRefresh();  // 毒状態を治す.
-        }
-        */
-
         // バフの初期化.
-        InitPlayerBuffer();
+        // InitPlayerBuffer();
 
         Player.PlayerInitPerBattleEnd();    // バトル終了時ごとに初期化される値.
         playerUI.UpdateSpcUI(Player);

@@ -698,12 +698,12 @@ public class PlayerManager : MonoBehaviour
             // もし敵のHPが０ならば、処理を抜け出す.
             if (Enemy.hp <= 0)
             {
-                yield return new WaitForSeconds(SettingManager.instance.MessageSpeed * 2);
+                yield return new WaitForSeconds(SettingManager.MessageSpeed * 2);
                 break;
             }
 
             // 今回は一撃ずつ処理を待つ.
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         }
 
@@ -720,7 +720,7 @@ public class PlayerManager : MonoBehaviour
         if (this.Level >= 5)
         {
             DialogTextManager.instance.SetScenarios(new string[] { "レベルは上限に達しています\nこれ以上経験値は入りません" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
             ExpDirecting = false;
         }
         else
@@ -728,7 +728,7 @@ public class PlayerManager : MonoBehaviour
             this.NowEXP += exp;
 
             DialogTextManager.instance.SetScenarios(new string[] { exp + "の経験値を手に入れた" });
-            yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
             if (this.NextEXP <= this.NowEXP)
             {
@@ -740,7 +740,7 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 DialogTextManager.instance.SetScenarios(new string[] { "次のレベルまでの経験値は" + (NextEXP - NowEXP) + "です" });
-                yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+                yield return new WaitForSeconds(SettingManager.MessageSpeed);
                 ExpDirecting = false;
             }
         } 

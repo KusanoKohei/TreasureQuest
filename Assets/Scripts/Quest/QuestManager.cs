@@ -32,6 +32,7 @@ public class QuestManager : MonoBehaviour
     DialogTextManager Dialog => DialogTextManager.instance;
     StageUIManager StageUI => StageUIManager.instance;
 
+
     public int Selection { get => selection; set => selection = value; }
     public bool Selected { get => selected; set => selected = value; }
     public bool Teated { get => teated; set => teated = value; }
@@ -73,8 +74,6 @@ public class QuestManager : MonoBehaviour
 
     public void SetEncount()
     {
-        Debug.Log("エンカウントを設定した");
-
         // ステージ数を設定.
         encountTable = new int[MAX_STAGE]; 
 
@@ -214,7 +213,7 @@ public class QuestManager : MonoBehaviour
         StageUI.ButtonUIAppearance(false);
 
         DialogTextManager.instance.SetScenarios(new string[] { "街に戻ると体力は全快しますが\nクエストはやり直しになります" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
 
         // 画面がクリックされるまで次の処理を待つ.
@@ -230,7 +229,7 @@ public class QuestManager : MonoBehaviour
 
 
         DialogTextManager.instance.SetScenarios(new string[] { "本当に街に戻りますか？" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         StageUI.YesNoButtonAppearance(true);
 
@@ -335,8 +334,6 @@ public class QuestManager : MonoBehaviour
 
     public IEnumerator HealDirecting()
     {
-        Debug.Log("HealDirecting");
-
         // healEffect(SE).
         SoundManager.instance.PlayButtonSE(5);
         // 回復エフェクト/
@@ -350,7 +347,7 @@ public class QuestManager : MonoBehaviour
         Player.HpAdd(healPoint);
         PlayerUI.UpdateUI(Player);
         DialogTextManager.instance.SetScenarios(new string[] { "体力が回復した" });
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // 毒を消しておく.
         if(Player.Poison != null)
@@ -376,7 +373,7 @@ public class QuestManager : MonoBehaviour
             "あなたは負けて、街へと引き返した……"
         });
 
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed + 1.0f);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed + 1.0f);
         sceneTransitionManager.LoadTo("Town");
     }
 
@@ -390,7 +387,7 @@ public class QuestManager : MonoBehaviour
 
     private IEnumerator GameClearDirecting() 
     {
-        yield return new WaitForSeconds(SettingManager.instance.MessageSpeed/3*2);
+        yield return new WaitForSeconds(SettingManager.MessageSpeed/3*2);
 
         DialogTextManager.instance.SetScenarios(new string[] { "探索中..." });
         // 背景画像を拡大する.それを完了後に元の大きさに戻す.

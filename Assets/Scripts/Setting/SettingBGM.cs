@@ -7,20 +7,19 @@ public class SettingBGM : MonoBehaviour
 {
     public Text buttonLabel;
 
-    private int num;
+    private static int num;
     public int Num { get => num; set => num = value; }
 
     public AudioSource audioSource;
 
-
+    [SerializeField]
     private float on = 0.5f;
-    public float On { get => on; set => on = value; }
 
+    [SerializeField]
     private float off = 0.0f;
-    public float Off { get => off; set => off = value; }
 
+    [SerializeField]
     private float max = 1.0f;
-    public float Max { get => max; set => max = value; }
 
 
     public enum Status
@@ -33,8 +32,6 @@ public class SettingBGM : MonoBehaviour
     Status status;
 
     SettingManager settingManager => SettingManager.instance;
-
-
 
 
     #region Singleton
@@ -57,73 +54,112 @@ public class SettingBGM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CheckNum();
-        SwitchBGMvolume();
+        SettingManager.instance.BgmVolume = SaveSystem.instance.UserData.BGMvolume;
+
+        CheckStatus();
+    }
+
+    private void CheckStatus()
+    {
+        Debug.Log(SettingManager.instance.BgmVolume);
+
+
+        if(SettingManager.instance.BgmVolume == off)
+        {
+            status = Status.OFF;
+        }
+        else if(SettingManager.instance.BgmVolume == on)
+        {
+            status = Status.ON;
+        }
+        else if(SettingManager.instance.BgmVolume == max)
+        {
+            status = Status.MAX;
+        }
+        else
+        {
+            status = Status.ON;
+        }
+
+        ChangeVolume();
+    }
+
+    private void ChangeVolume()
+    {
+        Debug.Log(status);
+
+        switch (status)
+        {
+            case Status.ON:
+                SoundManager.instance.audioSourceBGM.volume = on;
+                buttonLabel.text = "O N";
+                break;
+
+            case Status.OFF:
+                SoundManager.instance.audioSourceBGM.volume = off;
+                buttonLabel.text = "OFF"; 
+                break;
+
+            case Status.MAX:
+                SoundManager.instance.audioSourceBGM.volume = max;
+                buttonLabel.text = "MAX"; 
+                break;
+
+            default:
+                SoundManager.instance.audioSourceBGM.volume = on;
+                buttonLabel.text = "O N"; 
+                break;
+        }
+
+        SettingManager.instance.BgmVolume = SoundManager.instance.audioSourceBGM.volume;
+        SaveSystem.instance.UserData.BGMvolume = SettingManager.instance.BgmVolume;
     }
 
     private void CheckNum()
     {
-        if(SaveSystem.instance.UserData.BGMvolume == On)
-        {
-            Num = 0;
-        }
-        else if(SaveSystem.instance.UserData.BGMvolume == Off)
-        {
-            Num = 1;
-        }
-        else if(SaveSystem.instance.UserData.BGMvolume == Max)
-        {
-            Num = 2;
-        }
-        else
-        {
-            Num = 0;
-        }
-    }
+        Debug.Log("CheckNum > " + Num);
 
-    public void SwitchBGMvolume()
-    {
         switch (Num)
         {
             case 0:
                 status = Status.ON;
-                buttonLabel.text = "O N";
-                SoundManager.instance.audioSourceBGM.volume = 0.5f;    // BGM用のスピーカーを最大にする.
                 break;
 
             case 1:
                 status = Status.OFF;
-                buttonLabel.text = "OFF";
-                SoundManager.instance.audioSourceBGM.volume = 0;    // BGM用のスピーカーを最小にする.
                 break;
 
             case 2:
                 status = Status.MAX;
-                buttonLabel.text = "MAX";
-                SoundManager.instance.audioSourceBGM.volume = 1f;    // BGM用のスピーカーを最大にする.
                 break;
 
             default:
-                SoundManager.instance.audioSourceBGM.volume = 1.0f;
+                status = Status.ON;
                 break;
         }
 
-        SaveSystem.instance.UserData.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
+        ChangeVolume();
     }
 
     public void OnClick()
     {
+        Debug.Log("bgmButton > OnClick()");
+        Debug.Log("OnClick >" + Num);
+
+        // Num = PlayerPrefs.GetInt("BGMNum", Num);
+        // Debug.Log(Num);
+
         Num++;
 
-        if (Num >= 3)
-        {
-            Num = 0;
-        }
+            if (Num >= 3)
+            {
+                Num = 0;
+            }
 
-        PlayerPrefs.SetInt("BGMvolumeNum", Num);
-        PlayerPrefs.Save();
+            // PlayerPrefs.SetInt("BGMvolumeNum", Num);
+            // PlayerPrefs.Save();
 
-        SwitchBGMvolume();
+        CheckNum();
 
         // ボタンクリック音を鳴らす.
         SoundManager.instance.PlayButtonSE(0);

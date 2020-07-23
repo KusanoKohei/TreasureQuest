@@ -38,7 +38,7 @@ public class TitleManager : MonoBehaviour
         // ロード.
         SaveSystem.Load();
 
-        SettingManager.instance.MessageSpeed        = Userdata.messageSpeed;
+        SettingManager.MessageSpeed        = Userdata.messageSpeed;
         SoundManager.instance.audioSourceBGM.volume = Userdata.BGMvolume;
         SoundManager.instance.audioSourceSE.volume  = Userdata.SEvolume;
 
@@ -82,6 +82,14 @@ public class TitleManager : MonoBehaviour
             Player.NextEXP  = Userdata.nextEXP;
             Player.NowEXP   = Userdata.nowEXP;
             Player.Kurikoshi = Userdata.kurikoshi;
+
+            // これ以前にセーブするとプレイヤーステータス初期化の前にセーブすることになるので体力が0になる.
+            SaveSystem.instance.Save();
+
+            SettingManager.MessageSpeed = Userdata.messageSpeed;
+            SettingManager.BgmVolume = Userdata.BGMvolume;
+            SettingManager.SeVolume = Userdata.SEvolume;
+
 
             SoundManager.instance.PlayButtonSE(0);  // ボタンのクリック音.
 

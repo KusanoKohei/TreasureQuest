@@ -28,7 +28,7 @@ public class NewGameButton : MonoBehaviour
         UserData.nowEXP = Player.NowEXP;
         UserData.kurikoshi = Player.Kurikoshi;
 
-        UserData.messageSpeed = SettingManager.instance.MessageSpeed;
+        UserData.messageSpeed = SettingManager.MessageSpeed;
         UserData.BGMvolume = SoundManager.instance.audioSourceBGM.volume;
         UserData.SEvolume = SoundManager.instance.audioSourceSE.volume;
 
