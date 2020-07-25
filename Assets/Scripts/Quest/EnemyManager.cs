@@ -145,14 +145,22 @@ public class EnemyManager : MonoBehaviour
     public bool DodgeRate(int dodgeRate)
     {
         int n = UnityEngine.Random.Range(0, 10);
-        return  n < dodgeRate;
+        
+        if(n < dodgeRate)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void BackAttackBuff()
     {
         this.BackAttacking = true;
 
-        buffSpd = (this.spd /3)*2;
+        buffSpd = this.spd*2+1;
         buffCritical = 3;
 
         this.critical += buffCritical;

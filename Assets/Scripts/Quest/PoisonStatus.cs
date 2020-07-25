@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PoisonStatus : MonoBehaviour
 {
-    private int count = 0;
+    public int poisonCount = 0;
 
     private int poisonDamage;
 
@@ -79,14 +79,11 @@ public class PoisonStatus : MonoBehaviour
 
     public IEnumerator PoisonDirection(PlayerManager player)
     {
-        Debug.Log(BattleManager.PoisonDirecting);
-        Debug.Log(Player.Poison);
+        poisonCount++;
 
         poisonDamage = Player.MaxHP / 20;
 
         BattleManager.instance.PoisonDirecting = true;
-
-        // count++;
 
         Player.Damage(poisonDamage);
 
@@ -108,27 +105,33 @@ public class PoisonStatus : MonoBehaviour
         }
         else
         {
-            /*
-            if (count >= 3)
+            if (poisonCount>=5)
             {
-
+                // 一つのバトル中に連続して3回毒ダメージを受けるとリフレッシュ.
+                StartCoroutine(PoisonRefresh());
+                yield return new WaitForSeconds(SettingManager.MessageSpeed);
+                BattleManager.PoisonDirecting = false;
             }
-            */
-
-            BattleManager.PoisonDirecting = false;
+            else
+            {
+                BattleManager.PoisonDirecting = false;
+            }
         }
     }
 
-    public void PoisonRefresh()
+    public IEnumerator PoisonRefresh()
     {
-        Debug.Log("PoisonRefresh");
-  
+        BattleManager.PoisonDirecting = true;
+
         Destroy(GetComponent<PoisonStatus>());  // 毒コンポーネントを削除.
         Player.Poison = null;
 
         PlayerUI.ToNeutralPanel();  // UIを毒状態から通常状態の表示へ.
 
         DialogTextManager.instance.SetScenarios(new string[] { "毒はしだいに治っていった" });
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+        BattleManager.PoisonDirecting = false;
     }
 
     private void SaveDataInitialize()

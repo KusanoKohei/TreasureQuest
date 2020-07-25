@@ -389,6 +389,7 @@ public class PlayerManager : MonoBehaviour
         
             DialogTextManager.instance.SetScenarios(new string[] { "会心の一撃！" });
             yield return new WaitForSeconds(SettingManager.MessageSpeed/2);
+            // 敵UIの更新.
             EnemyUI.UpdateUI(Enemy);
             DialogTextManager.instance.SetScenarios(new string[] { BattleManager.Enemy.name + "に" + damage + "のダメージを与えた" });
         }
@@ -426,7 +427,7 @@ public class PlayerManager : MonoBehaviour
             yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
             Dialog.ClickIconEnableAppear = false;
             DialogTextManager.instance.clickImage.enabled = false;
-
+            // 敵UIの更新.
             EnemyUI.UpdateUI(Enemy);
             DialogTextManager.instance.SetScenarios(new string[] { BattleManager.Enemy.name + "に" + damage + "のダメージを与えた" });
         }
@@ -688,6 +689,11 @@ public class PlayerManager : MonoBehaviour
             }
             else
             {
+                if (i == 2)
+                {
+                    this.Atk += this.Atk / 3;
+                }
+
                 StartCoroutine(PlayerCommonAttack());
             }
 
@@ -703,12 +709,14 @@ public class PlayerManager : MonoBehaviour
             }
 
             // 今回は一撃ずつ処理を待つ.
-            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+            yield return new WaitForSeconds(SettingManager.MessageSpeed*1.5f);
 
         }
 
         // 攻撃力を元に戻す.
         this.Atk = Level_ParameterManager.playerLevel[this.Level - 1, 3];
+        // バフはかけた状態を維持する.
+        BattleManager.CheckPlayerBuffer();
 
         mitokorogiriAction = false;
     }
@@ -807,7 +815,7 @@ public class PlayerManager : MonoBehaviour
         // 毒を治す.
         if(Poison != null)
         {
-            Poison.PoisonRefresh();
+            StartCoroutine(Poison.PoisonRefresh());
         }
 
         // エンカウントを振り直す.

@@ -75,11 +75,10 @@ public class C_Zombie : EnemyManager
         if (enemy.Hitted)   // 攻撃が当たっていなければ呼ばない.
         {
             int r;
-            r = Random.Range(0, 10);
-            if (r > 6)
+            r = Random.Range(0, 5);
+            if (r > 2)
             {
                 Player.Poison = Player.gameObject.AddComponent<PoisonStatus>();
-                Debug.Log(Player.Poison);
             }
             else
             {

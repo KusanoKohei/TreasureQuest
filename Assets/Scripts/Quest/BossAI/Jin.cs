@@ -77,8 +77,6 @@ public class Jin : EnemyManager
         // ステータス状態をチェック.
         SwitchStatus();
 
-        Debug.Log("SelectAction()");
-
         switch (status)
         {
             case Status.normal:
@@ -144,10 +142,10 @@ public class Jin : EnemyManager
             {
                 StartCoroutine(JinHealDirecting());
             }
-
-            StartCoroutine(IceProtect());
-
-            // StartCoroutine(ChargeDirecting());
+            else
+            {
+                StartCoroutine(IceProtect());
+            }
         }
         else 
         {
@@ -155,14 +153,16 @@ public class Jin : EnemyManager
             {
                 StartCoroutine(JinHealDirecting());
             }
-
-            if(Player.Level == 4)
-            {
-                StartCoroutine(IceProtect());
-            }
             else
             {
-                BerserkActionSelect();
+                if (Player.Level == 4)
+                {
+                    StartCoroutine(IceProtect());
+                }
+                else
+                {
+                    BerserkActionSelect();
+                }
             }
         }
     }
@@ -176,7 +176,7 @@ public class Jin : EnemyManager
         // レベル３でも倒せそうに優遇する.
         if (Player.Level <= 3)
         {
-            if (enemy.hp <= (enemy.hp / 6))
+            if (enemy.hp <= (enemy.hp / 7))
             {
                 int d = Random.Range(0, 7);
                 if (d < 4)
@@ -188,17 +188,17 @@ public class Jin : EnemyManager
                     StartCoroutine(IceNiddle());  // 通常攻撃.
                 }
             }
-            else if ((r==9)||(r == 10))
+            else if (r == 10)
             {
                 StartCoroutine(IceNiddle());   // アイスニードル.
             }
             
-            else if ((6 <= r) && (r <= 8))
+            else if ((6 <= r) && (r <= 9))
             {
                 if (waited > 0)
                 {
                     waited = 0;
-                    StartCoroutine(JinCommonAttack());              // 通常攻撃.
+                    StartCoroutine(JinCommonAttack());   // 通常攻撃.
                 }
                 else
                 {
@@ -237,9 +237,6 @@ public class Jin : EnemyManager
 
     public void BerserkActionSelect()
     {
-        Debug.Log("BerserkActionSelect()");
-        Debug.Log(berserkMessaged);
-
         if (berserkMessaged == false)
         {
             StartCoroutine(BerserkMessageAtOnce());
@@ -259,8 +256,6 @@ public class Jin : EnemyManager
 
     public void BASverWeak()
     {
-        Debug.Log("BASverWeak()");
-
         int r;
         r = Random.Range(0, 11);
 
@@ -306,6 +301,9 @@ public class Jin : EnemyManager
 
                     case 5:
                     case 4:
+                        StartCoroutine(JinWaiting());
+                        break;
+
                     case 3:
                     case 2:
                     case 1:
@@ -319,8 +317,6 @@ public class Jin : EnemyManager
 
     public void BASverStrong()
     {
-        Debug.Log("BASverStrong()");
-
         int r;
         r = Random.Range(0, 11);
 
@@ -380,8 +376,6 @@ public class Jin : EnemyManager
 
     public IEnumerator JinCommonAttack()
     {
-        Debug.Log("JinCommonAttack()");
-
         yield return new WaitWhile(() => JinDirecting);
         JinDirecting = true;
         
@@ -389,7 +383,15 @@ public class Jin : EnemyManager
 
         StartCoroutine(enemy.Attacks());
         yield return new WaitWhile(() => enemy.NowActive);
-        
+
+        // プレイヤーレベル4以上かつ、攻撃が当たったときかつ、毒状態ではない時にのみ毒状態にかかるかの判定.
+        if (Player.Level>=5 && enemy.Hitted && (!Player.Poison))           {
+            PoisonProbability();
+            // HittedはBattleManagerで初期化する.
+            // 毒状態にかかった演出が終了するまで待機させる.
+            yield return new WaitWhile(() => BattleManager.PoisonDirecting);
+        }
+
         JinDirecting = false;
 
         BattleManager.EndOfEnemyTurn();
@@ -397,8 +399,6 @@ public class Jin : EnemyManager
 
     public IEnumerator IceBurn()
     {
-        Debug.Log("IceBurn()");
-
         berserkAtOnce = false;
         iceBurnDirecting = true;
 
@@ -534,7 +534,6 @@ public class Jin : EnemyManager
     {
         Debug.Log("ChargeDirecting()");
 
-        yield return new WaitWhile(() => JinDirecting);
         JinDirecting = true;
 
         yield return new WaitWhile(() => berserkMessaging);     // バーサークモード切り替わり時のメッセージ中は止めておく.
@@ -564,68 +563,67 @@ public class Jin : EnemyManager
 
     public IEnumerator IceProtect()
     {
-        yield return new WaitWhile(() => berserkMessaging);     // バーサークモード切り替わり時のメッセージ中は止めておく.
-
-        yield return new WaitWhile(() => JinDirecting);
-        JinDirecting = true;
-
         // 既にプロテクションが張られていたら行動の再抽選.
-        if(enemy.Protection != null)
+        if (enemy.Protection != null)
         {
             Debug.Log("既にプロテクションが張られていたから行動の再抽選.");
             SelectAction();
         }
-
-        // this（ジン）にProtectionStatusコンポーネントを追加する.
-        enemy.Protection = enemy.gameObject.AddComponent<ProtectionStatus>();
-
-        // voice_of_light 防御エフェクト(SE).
-        SoundManager.instance.PlayButtonSE(4);
-
-        // 防御エフェクト.
-        GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
-        defenceEffect.transform.localPosition = new Vector3 (0, 0, 0);
-        defenceEffect.transform.localScale = new Vector3(3, 3, 0);
-        Instantiate(defenceEffect, enemy.transform, false);
-
-        DialogTextManager.instance.SetScenarios(new string[] { this.name + "は\n氷の壁をつくりだした" });
-        yield return new WaitForSeconds(SettingManager.MessageSpeed + 1.0f);
-        DialogTextManager.instance.SetScenarios(new string[] { "あなたの次の『こうげき』は\n 無効になります" });
-        yield return new WaitForSeconds(SettingManager.MessageSpeed);
-
-        // 画面がクリックされるまで次の処理を待つ.
-        if (!Dialog.IsEnd)
-        {
-            Dialog.EnableClickIcon();
-        }
-
-        Dialog.ClickIconEnableAppear = true;
-        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
-        Dialog.ClickIconEnableAppear = false;
-        DialogTextManager.instance.clickImage.enabled = false;
-
-        JinDirecting = false;
-
-
-        if (berserkAtOnce&&Player.Level>=5)
-        {
-            Debug.Log("バーサークモード状態になりたててレベル５以上だからチャージ");
-            StartCoroutine(ChargeDirecting());
-        }
-        else if(berserkAtOnce & Player.Level == 4)
-        {
-            BerserkActionSelect();
-        }
         else
         {
-            BattleManager.EndOfEnemyTurn();
+            yield return new WaitWhile(() => berserkMessaging);     // バーサークモード切り替わり時のメッセージ中は止めておく.
+
+            yield return new WaitWhile(() => JinDirecting);
+            JinDirecting = true;
+
+            // this（ジン）にProtectionStatusコンポーネントを追加する.
+            enemy.Protection = enemy.gameObject.AddComponent<ProtectionStatus>();
+
+            // voice_of_light 防御エフェクト(SE).
+            SoundManager.instance.PlayButtonSE(4);
+
+            // 防御エフェクト.
+            GameObject defenceEffect = Resources.Load<GameObject>("DefenceEffect");
+            defenceEffect.transform.localPosition = new Vector3(0, 0, 0);
+            defenceEffect.transform.localScale = new Vector3(3, 3, 0);
+            Instantiate(defenceEffect, enemy.transform, false);
+
+            DialogTextManager.instance.SetScenarios(new string[] { this.name + "は\n氷の壁をつくりだした" });
+            yield return new WaitForSeconds(SettingManager.MessageSpeed + 1.0f);
+            DialogTextManager.instance.SetScenarios(new string[] { "あなたの次の『こうげき』は\n 無効になります" });
+            yield return new WaitForSeconds(SettingManager.MessageSpeed);
+
+            // 画面がクリックされるまで次の処理を待つ.
+            if (!Dialog.IsEnd)
+            {
+                Dialog.EnableClickIcon();
+            }
+
+            Dialog.ClickIconEnableAppear = true;
+            yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+            Dialog.ClickIconEnableAppear = false;
+            DialogTextManager.instance.clickImage.enabled = false;
+
+            JinDirecting = false;
+
+
+            if (berserkAtOnce && Player.Level >= 5)
+            {
+                StartCoroutine(ChargeDirecting());
+            }
+            else if (berserkAtOnce && Player.Level == 4)
+            {
+                BerserkActionSelect();
+            }
+            else
+            {
+                BattleManager.EndOfEnemyTurn();
+            }
         }
     }
 
     public IEnumerator IceNiddle()
     {
-        Debug.Log("IceNiddle()");
-
         yield return new WaitWhile(() => JinDirecting);
         JinDirecting = true;
 
@@ -681,9 +679,10 @@ public class Jin : EnemyManager
 
         int healPoint;
 
+        // プレイヤーレベルに応じて回復量を変化させる.
         if(Player.Level<= 3)
         {
-            healPoint = (int)this.maxHP / 6; 
+            healPoint = (int)this.maxHP / 8; 
         }
         else
         {
@@ -699,7 +698,7 @@ public class Jin : EnemyManager
         enemyUI.UpdateUI(enemy);
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は回復呪文を唱えた" });
-
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)
@@ -728,7 +727,7 @@ public class Jin : EnemyManager
         waited++;
 
         DialogTextManager.instance.SetScenarios(new string[] { this.name + "は 様子をみている" });
-
+        yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
         // 画面がクリックされるまで次の処理を待つ.
         if (!Dialog.IsEnd)
@@ -749,8 +748,8 @@ public class Jin : EnemyManager
     public void PoisonProbability()
     {
         int r;
-        r = Random.Range(0, 10);
-        if (r > 7)
+        r = Random.Range(0, 3);
+        if (r == 0)
         {
             Player.Poison = Player.gameObject.AddComponent<PoisonStatus>();
         }

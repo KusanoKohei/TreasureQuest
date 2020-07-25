@@ -9,7 +9,7 @@ public class SettingSE : MonoBehaviour
     private int num;
     public AudioSource audioSource;
 
-    private float on = 0.75f;
+    private float on = 0.6f;
     public float On { get => on; set => on = value; }
 
     private float off = 0.0f;
@@ -64,7 +64,7 @@ public class SettingSE : MonoBehaviour
             case 1:
                 status = Status.MAX;
                 buttonLabel.text = "O N";
-                SoundManager.instance.audioSourceSE.volume = 0.75f;    // BGM用のスピーカーを最大にする.
+                SoundManager.instance.audioSourceSE.volume = 0.6f;    // BGM用のスピーカーを最大にする.
                 break;
         }
 

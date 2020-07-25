@@ -34,6 +34,7 @@ public class TownManager : MonoBehaviour
         // ゲームオーバー後に戻ってきたなら.
         if (Player.Dead || Player.Hp < Player.MaxHP)
         {
+            Debug.Log(Player.Dead);
             StartCoroutine(TownRefresh());
         }
         else
@@ -64,12 +65,6 @@ public class TownManager : MonoBehaviour
         dialogCanvas.ignoreParentGroups = true;
 
         DialogTextManager.instance.SetScenarios(new string[] { "街についた" });
-
-        // 毒を無効化.
-        if (Player.Poison != null)
-        {
-            Player.Poison.PoisonRefresh();
-        }
     }
 
     private IEnumerator TownRefresh()
@@ -116,7 +111,7 @@ public class TownManager : MonoBehaviour
         // 毒を無効化.
         if (Player.Poison != null)
         {
-            Player.Poison.PoisonRefresh();
+            StartCoroutine(Player.Poison.PoisonRefresh());
         }
 
 

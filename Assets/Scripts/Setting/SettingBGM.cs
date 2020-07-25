@@ -64,21 +64,25 @@ public class SettingBGM : MonoBehaviour
         Debug.Log(SettingManager.instance.BgmVolume);
 
 
-        if(SettingManager.instance.BgmVolume == off)
-        {
-            status = Status.OFF;
-        }
-        else if(SettingManager.instance.BgmVolume == on)
+        if(SettingManager.instance.BgmVolume == on)
         {
             status = Status.ON;
+            Num = 0;
+        }
+        else if(SettingManager.instance.BgmVolume == off)
+        {
+            status = Status.OFF;
+            Num = 1;
         }
         else if(SettingManager.instance.BgmVolume == max)
         {
             status = Status.MAX;
+            Num = 2;
         }
         else
         {
             status = Status.ON;
+            Num = 0;
         }
 
         ChangeVolume();
@@ -141,13 +145,11 @@ public class SettingBGM : MonoBehaviour
         ChangeVolume();
     }
 
+
     public void OnClick()
     {
         Debug.Log("bgmButton > OnClick()");
         Debug.Log("OnClick >" + Num);
-
-        // Num = PlayerPrefs.GetInt("BGMNum", Num);
-        // Debug.Log(Num);
 
         Num++;
 
@@ -155,9 +157,6 @@ public class SettingBGM : MonoBehaviour
             {
                 Num = 0;
             }
-
-            // PlayerPrefs.SetInt("BGMvolumeNum", Num);
-            // PlayerPrefs.Save();
 
         CheckNum();
 

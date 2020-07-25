@@ -24,6 +24,7 @@ public class QuestManager : MonoBehaviour
     private int selection=0;
     private bool selected = false;
     private bool teated = false;
+    public int trapCount = 3;
 
 
     UserData Userdata => SaveSystem.instance.UserData;
@@ -59,6 +60,8 @@ public class QuestManager : MonoBehaviour
 
     protected virtual void Start()
     {
+        Debug.Log(Player.Dodge);
+
         dialogWindow = GameObject.Find("DialogUI");
 
         PlayerUI.SetupUI(Player);
@@ -126,6 +129,8 @@ public class QuestManager : MonoBehaviour
 
     IEnumerator Searching()
     {
+        trapCount++;
+
         DialogTextManager.instance.SetScenarios(new string[] { "探索中..." });
         // 背景画像を拡大する.それを完了後に元の大きさに戻す.
         questBG.transform.DOScale(new Vector3(1.5f, 1.5f, 1.5f), 2.0f)
@@ -241,7 +246,14 @@ public class QuestManager : MonoBehaviour
 
             SoundManager.instance.PlayButtonSE(0);
 
-            Destroy(Player.GetComponent<BuffStatus>());     // バフを消しておく.
+            BattleManager.instance.InitPlayerBuffer();     // バフを消しておく.
+
+            // 毒を無効化.
+            if (Player.Poison != null)
+            {
+                StartCoroutine(Player.Poison.PoisonRefresh());
+            }
+
             Teated = true;
             SceneTransitionManager.instance.LoadTo("Town");
         }
@@ -254,7 +266,7 @@ public class QuestManager : MonoBehaviour
             // 選択肢ボタンを消し、ステージを進行させるボタンを表示させる.
             StageUI.YesNoButtonAppearance(false);
             StageUI.ButtonUIAppearance(true);
-            DialogTextManager.instance.SetScenarios(new string[] { "" });
+            DialogTextManager.instance.SetScenarios(new string[] { "街へ帰るのを思いとどまった" });
         }
 
     }
@@ -316,7 +328,7 @@ public class QuestManager : MonoBehaviour
             // 選択肢ボタンを消し、ステージを進行させるボタンを表示させる.
             StageUI.YesNoButtonAppearance(false);
             StageUI.ButtonUIAppearance(true);
-            DialogTextManager.instance.SetScenarios(new string[] { "" });
+            DialogTextManager.instance.SetScenarios(new string[] { "ケガの手当てをやめた" });
         }
     }
 
@@ -352,7 +364,7 @@ public class QuestManager : MonoBehaviour
         // 毒を消しておく.
         if(Player.Poison != null)
         {
-            Player.Poison.PoisonRefresh();
+            StartCoroutine(Player.Poison.PoisonRefresh());
         }
     }
 
@@ -367,7 +379,8 @@ public class QuestManager : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         Player.Dead = true;  // ゲームオーバーになったフラグ.(TownManagerで使う).
-        Destroy(Player.GetComponent<BuffStatus>());     // バフを消しておく.
+
+        BattleManager.instance.InitPlayerBuffer();     // バフを消しておく.
 
         DialogTextManager.instance.SetScenarios(new string[]{
             "あなたは負けて、街へと引き返した……"
@@ -381,6 +394,17 @@ public class QuestManager : MonoBehaviour
     {
         // ゲームクリアフラグ.
         Userdata.isCleared = true;
+
+        if(Player.BuffStatus != null)
+        {
+            BattleManager.instance.InitPlayerBuffer();
+        }
+
+        if(Player.Poison != null)
+        {
+            Destroy(Player.Poison.GetComponent<PoisonStatus>());
+        }
+
 
         StartCoroutine(GameClearDirecting());
     }
@@ -416,10 +440,10 @@ public class QuestManager : MonoBehaviour
         SoundManager.instance.PlayBGM("Title");   // BGM.
 
         DialogTextManager.instance.SetScenarios(new string[] { "トレジャーハンターのあなたは\n街へ戻ると" });
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
 
         DialogTextManager.instance.SetScenarios(new string[] { "次のお宝を求めて旅立った……" });
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(3.0f);
 
 
         DialogTextManager.instance.SetScenarios(new string[] { "GAME CLEAR !! \n Thank you for Playing" });
@@ -436,14 +460,14 @@ public class QuestManager : MonoBehaviour
         // -----------
 
         DialogTextManager.instance.SetScenarios(new string[] { "クリアデータをセーブしました" });
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
 
         DialogTextManager.instance.SetScenarios(new string[] { "次回のゲームは現状の強さのまま\n再開できます" });
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(3.0f);
 
 
         DialogTextManager.instance.SetScenarios(new string[] { "『ニューゲーム』ボタンが\nタイトル画面に出現しました" });
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
 
         DialogTextManager.instance.SetScenarios(new string[] { "『ニューゲーム』では最初から\n冒険をやり直すことができます" });
         yield return new WaitForSeconds(4.0f);

@@ -27,134 +27,141 @@ public class QuestEvent : QuestManager
     public void EventRandom(int currentStage, int encountTableLength)
     {
         int n = Random.Range(0, 10);
-        // int n = 3;  // デバッグ用.
-        Debug.Log(n);
+        // int n = 6;  // デバッグ用.
 
-        // 体力が低い時は少し優しめに.
-        if(Player.Hp <= (Player.MaxHP / 2))
+        // ステージ終盤かつプレイヤーの残りHPが少なければ、またはステージ終盤なのに毒状態で手当ても使ってしまったならば.
+        if(((currentStage>=(encountTableLength/10)*7) && (Player.Hp <= (Player.MaxHP / 3)*2))||(Player.Poison!=null)&&QuestManager.Teated)
         {
-            Debug.Log("体力が低い時のイベント設定");
-            n = Random.Range(0, 4);
+            Debug.Log("お助けあまあまエンカ");
+            n = Random.Range(0, 3);
 
             switch (n)
             {
                 case 0:
+                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                    break;
+
                 case 1:
-                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                    break;
-
                 case 2:
-                    StartCoroutine(MushroomEvent());
-                    break;
-
-                case 3:
                     StartCoroutine(HealAreaEvent());
-                    break;
-
-                default:
-                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
                     break;
             }
         }
         else
         {
-            switch (n)
+            // 体力が低い時は少し優しめに.
+            if (Player.Hp <= (Player.MaxHP / 5) * 3)
             {
-                case 0:
-                case 1:
-                case 2:
+                Debug.Log("体力が低い時のイベント設定");
+                n = Random.Range(0, 4);
 
-                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                switch (n)
+                {
+                    case 0:
+                    case 1:
+                        StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                        break;
 
-                    break;
-
-                case 3:
-                case 4:
-                case 5:
-
-                    if (Player.Level >= 5)
-                    {
-                        if (currentStage < 2 || currentStage <= 8)
-                        {
-                            StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                        }
-                        else
-                        {
-                            StartCoroutine(TrapEvent(currentStage));
-                        }
-                    }
-                    else
-                    {
-                        if (currentStage < 2 || currentStage>=8)
-                        {
-                            Debug.Log("イベント無し");
-                            StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                        }
-                        else
-                        {
-                            // トラップイベント.
-                            Debug.Log("トラップイベント");
-                            StartCoroutine(TrapEvent(currentStage));
-                        }
-                    }
-
-                    break;
-
-
-                case 6:
-                case 7:
-                    if(Player.Level >= 5)
-                    {
-                        int d = Random.Range(0, 2);
-                        if (d == 0)
-                        {
-                            EventRandom(currentStage, encountTableLength);  // 再抽選. 
-                        }
-                        else
-                        {
-                            // キノコイベントです.
-                            Debug.Log("キノコイベント");
-                            StartCoroutine(MushroomEvent());
-                        }
-                    }
-                    else
-                    {
-                        // キノコイベントです.
-                        Debug.Log("キノコイベント");
+                    case 2:
                         StartCoroutine(MushroomEvent());
-                    }
+                        break;
 
-                    break;
+                    case 3:
+                        StartCoroutine(HealAreaEvent());
+                        break;
 
-                case 8:
-                case 9:
-                
-                    // もしHPが4/5より大きければ.
-                    if (Player.Hp >= (Player.MaxHP * 4 / 5))
-                    {
-                        if (Player.Poison)  // しかしながら毒状態ならば.
+                    default:
+                        StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                        break;
+                }
+            }
+            else
+            {
+                switch (n)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+
+                        StartCoroutine(NothingEvent(currentStage, encountTableLength));
+
+                        break;
+
+                    case 3:
+                    case 4:
+                    case 5:
+                        if (QuestManager.trapCount < 3)
+                        {
+                            // 再抽選.
+                            EventRandom(currentStage, encountTableLength);
+                        }
+                        else
+                        {
+                            if (Player.Level >= 5)
+                            {
+                                if (currentStage < 2 || currentStage <= 8)
+                                {
+                                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                                }
+                                else
+                                {
+                                    StartCoroutine(TrapEvent(currentStage));
+                                }
+                            }
+                            else
+                            {
+                                if (currentStage < 2 || currentStage >= 8)
+                                {
+                                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                                }
+                                else
+                                {
+                                    // トラップイベント.
+                                    StartCoroutine(TrapEvent(currentStage));
+                                }
+                            }
+                        }
+
+                        break;
+
+
+                    case 6:
+                    case 7:
+                        // キノコイベントです.
+                        StartCoroutine(MushroomEvent());
+
+                        break;
+
+                    case 8:
+                    case 9:
+
+                        // もしHPが4/5より大きければ.
+                        if (Player.Hp >= (Player.MaxHP * 4 / 5))
+                        {
+                            if (Player.Poison)  // しかしながら毒状態ならば.
+                            {
+                                // 回復の泉イベントです.
+                                StartCoroutine(HealAreaEvent());
+                            }
+                            else
+                            {
+                                EventRandom(currentStage, encountTableLength);  // 再抽選. 
+                            }
+                        }
+                        else
                         {
                             // 回復の泉イベントです.
                             StartCoroutine(HealAreaEvent());
                         }
-                        else
-                        {
-                            Debug.Log("回復の泉の再抽選");
-                            EventRandom(currentStage, encountTableLength);  // 再抽選. 
-                        }
-                    }
-                    else
-                    {
-                        // 回復の泉イベントです.
-                        StartCoroutine(HealAreaEvent());
-                    }
 
-                    break;
+                        break;
 
-                default:
-                    Debug.Log("default");
-                    StartCoroutine(NothingEvent(currentStage, encountTableLength));
-                    break;
+                    default:
+                        Debug.Log("default");
+                        StartCoroutine(NothingEvent(currentStage, encountTableLength));
+                        break;
+                }
+
             }
 
         }
@@ -189,6 +196,8 @@ public class QuestEvent : QuestManager
     // トラップイベント関数です.
     private IEnumerator TrapEvent(int currentStage)
     {
+        QuestManager.trapCount = 0;
+
         // エンカウントをリセットする（トラップでステージを戻っても同じパターンにはまらないように).
         SetEncount();
 
@@ -229,6 +238,18 @@ public class QuestEvent : QuestManager
         DialogTextManager.instance.SetScenarios(new string[] { "押しつぶされないように\n必死に逃げた！" });
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
+        // 画面がクリックされるまで次の処理を待つ.
+        if (!DialogTextManager.instance.IsEnd)
+        {
+            DialogTextManager.instance.EnableClickIcon();
+        }
+
+        DialogTextManager.instance.ClickIconEnableAppear = true;
+        yield return new WaitUntil(() => DialogTextManager.instance.IsEnd);
+        DialogTextManager.instance.ClickIconEnableAppear = false;
+        DialogTextManager.instance.clickImage.enabled = false;
+
+
         DialogTextManager.instance.SetScenarios(new string[] { "逃げ切れたが、いくぶんか来た道を\n戻ってしまったみたいだ……" });
         yield return new WaitForSeconds(SettingManager.MessageSpeed);
 
@@ -244,8 +265,9 @@ public class QuestEvent : QuestManager
         DialogTextManager.instance.clickImage.enabled = false;
 
 
-        // ステージUIの更新もここでやってくれます.
-        QuestManager.ModoruStage(2);
+        // ランダムで1～2ステージを後退する.
+        int r = Random.Range(1, 3);
+        QuestManager.ModoruStage(r);    // ステージUIの更新もここでやってくれます.
 
         // ちょっと待つ.
         yield return new WaitForSeconds(1.0f);
@@ -332,7 +354,7 @@ public class QuestEvent : QuestManager
                     StageUI.YesNoButtonAppearance(false);
 
                     // 毒状態を治す.
-                    Player.Poison.PoisonRefresh();
+                    StartCoroutine(Player.Poison.PoisonRefresh());
                 }
                 else
                 {
@@ -365,7 +387,7 @@ public class QuestEvent : QuestManager
                             StageUI.YesNoButtonAppearance(false);
 
                             // 毒状態を治す.
-                            Player.Poison.PoisonRefresh();
+                            StartCoroutine(Player.Poison.PoisonRefresh());
                         }
                         else
                         {

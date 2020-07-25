@@ -178,8 +178,6 @@ public class BattleManager : MonoBehaviour
 
     public void EndOfEnemyTurn()
     {
-        Debug.Log("BattleManager > EndOfEnemyTurn()");
-
         enemy.IsTurned = true;
         enemy.Hitted = false;
         CheckPlayerAlive();             // プレイヤーのHPがまだ残っているかチェックする.
@@ -233,7 +231,7 @@ public class BattleManager : MonoBehaviour
     // ターンエンド時に何か特別に処理しなくてはならないこと.
     private IEnumerator CheckTurnEndProcess()
     {
-        if (Player.Poison != null)  // 毒のインスタンスが生成されていたなら（毒状態なら）.
+        if (Player.Poison != null)  // 毒状態なら.
         {
             StartCoroutine(Player.Poison.PoisonDirection(Player));
         }
@@ -351,8 +349,8 @@ public class BattleManager : MonoBehaviour
             Player.Spd      = Level_ParameterManager.playerLevel[Player.Level - 1, 4];
             Player.Dodge    = Level_ParameterManager.playerLevel[Player.Level - 1, 5];
             Player.Critical = Level_ParameterManager.playerLevel[Player.Level - 1, 6];
-        }
 
-        Destroy(Player.GetComponent<BuffStatus>());
+            Destroy(Player.GetComponent<BuffStatus>()); // コンポーネントの消去.
+        }
     }
 }
